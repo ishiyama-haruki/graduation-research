@@ -11,8 +11,10 @@ dataset = sys.argv[1]
 
 if dataset == 'mnist':
     train_dataset, test_dataset, train_dataloader, test_dataloader = sample_data.get_mnist_dataloader()
-# elif dataset == 'letter':
-#     X, Y, Xt, Yt = sample_data.get_letter()
+    image_size = 28*28
+elif dataset == 'usps':
+    train_dataset, test_dataset, train_dataloader, test_dataloader = sample_data.get_usps_dataloader()
+    image_size = 16*16
 
 
 n_epochs = 100
@@ -20,7 +22,6 @@ M = 1000
 lr = 1e-8
 lda1 = 1e-5 # λ'
 lda2 = 1e-10  # λ
-image_size = 28*28
 
 train_logname = '/workspace/nn/results/{}/train_log.csv'.format(dataset)
 test_logname = '/workspace/nn/results/{}/test_log.csv'.format(dataset)
