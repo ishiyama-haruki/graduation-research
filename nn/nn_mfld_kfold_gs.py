@@ -1,58 +1,27 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision import datasets, transforms
 import numpy as np
-import csv
+from scripts import sample_data
+import itertools
+from sklearn.model_selection import KFold
+from torch.utils.data.dataset import Subset
+from torch.utils.data import Dataset, DataLoader
 
-n_epochs = 500
+learning_dataset, test_dataset, learning_dataloader, test_dataloader = sample_data.get_usps_dataloader()
+image_size = 16*16
+
 n_batch = 100
-M = 100
-lr = 1e-5
-lda1 = 1e-5 # λ'
-lda2 = 1e-10  # λ
-image_size = 28*28
+n_epochs = [10, 100]
+M = [10, 100]
+lr = [1e-1, 1e-5]
+lda1 = [1e-5, 1e-10] # λ'
+lda2 = [1e-5, 1e-10]  # λ
+params = list(itertools.product(n_epochs, M, lr, lda1, lda2))
 
-train_logname = '/workspace/nn/results/train_log.csv'
-test_logname = '/workspace/nn/results/test_log.csv'
 
 # GPU(CUDA)が使えるかどうか？
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-#----------------------------------------------------------
-# 学習用／評価用のデータセットの作成
-
-# 変換方法の指定
-transform = transforms.Compose([
-    transforms.ToTensor()
-    ])
-
-# 学習用
-train_dataset = datasets.MNIST(
-    './data',               # データの保存先
-    train = True,           # 学習用データを取得する
-    download = True,        # データが無い時にダウンロードする
-    transform = transform   # テンソルへの変換など
-    )
-
-# 評価用
-test_dataset = datasets.MNIST(
-    './data', 
-    train = False,
-    transform = transform
-    )
-
-# データローダー
-train_dataloader = torch.utils.data.DataLoader(
-    train_dataset,
-    batch_size = n_batch,
-    shuffle = True)
-
-test_dataloader = torch.utils.data.DataLoader(
-    test_dataset,
-    batch_size = n_batch,
-    shuffle = True)
-
 
 #----------------------------------------------------------
 # ニューラルネットワークモデルの定義
@@ -71,18 +40,9 @@ class Net(nn.Module):
         x = self.fc2(x)
         return F.log_softmax(x, dim=1)
 
-
-#----------------------------------------------------------
-# ニューラルネットワークの生成
-model = Net(image_size, 10).cuda()
-
-#----------------------------------------------------------
-# 損失関数の設定
-criterion = nn.CrossEntropyLoss()
-
 #----------------------------------------------------------
 # 学習
-def train(epoch):
+def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
     model.train()  # モデルを訓練モードにする
 
     loss_sum = 0
@@ -120,14 +80,14 @@ def train(epoch):
 
 #----------------------------------------------------------
 # 評価
-def test(epoch):
+def test(dataset, dataloader):
     model.eval() # モデルを評価モードにする
 
     loss_sum = 0
     correct = 0
 
     with torch.no_grad():
-        for inputs, labels in test_dataloader:
+        for inputs, labels in dataloader:
             # GPUが使えるならGPUにデータを送る
             inputs = inputs.cuda()
             labels = labels.cuda()
@@ -144,23 +104,57 @@ def test(epoch):
             #正解数をカウント
             correct += pred.eq(labels.view_as(pred)).sum().item()
 
-    return loss_sum.item(), correct/len(test_dataset)
+    return loss_sum.item(), correct/len(dataset)
 
 
+max_val_acc = 0
+best_param = []
+# グリッドサーチ：全パラメータの組み合わせで実行
+for i, param in enumerate(params): 
+    print('{}/{}'.format(i+1, len(params)))
+    print(param)
+    n_epochs = param[0]
+    M = param[1]
+    lr =  param[2]
+    lda1 = param[3]
+    lda2 = param[4]
 
-for epoch in range(n_epochs):
-    train_loss, train_acc = train(epoch)
-    print("epoch", epoch+1, " train_loss:{:.5f}".format(train_loss), "train_acc:{:.2f}".format(train_acc))
+    # ニューラルネットワークの生成
+    model = Net(image_size, 10).cuda()
+    #----------------------------------------------------------
+    # 損失関数の設定
+    criterion = nn.CrossEntropyLoss()
 
-    with open(train_logname, 'a') as train_logfile:
-        train_logwriter = csv.writer(train_logfile, delimiter=',')
-        train_logwriter.writerow([epoch, "{:.5f}".format(float(train_loss)), "{:.3f}".format(float(train_acc))])
-    
-    if (epoch+1)%5 == 0:
-        test_loss, test_acc = test(epoch)
-        print("test_loss:{:.3f}".format(test_loss), "test_acc:{:.3f}".format(test_acc))
-        
-        with open(test_logname, 'a') as test_logfile:
-            test_logwriter = csv.writer(test_logfile, delimiter=',')
-            test_logwriter.writerow([epoch, "{:.5f}".format(float(test_loss)), "{:.3f}".format(float(test_acc))])
+    # クロスバリデーション
+    kf = KFold(n_splits=3, shuffle=True)
+    val_acc_sum = 0
+    for train_index, valid_index in kf.split(learning_dataset.data):
+        train_dataset = Subset(learning_dataset, train_index)
+        train_dataloader = DataLoader(train_dataset, n_batch, shuffle=True)
+        valid_dataset   = Subset(learning_dataset, valid_index)
+        valid_dataloader = DataLoader(valid_dataset, n_batch, shuffle=False)
 
+        for epoch in range(n_epochs):
+            train_loss, train_acc = train(train_dataset, train_dataloader, M, lr, lda1, lda2)
+        val_loss, val_acc = test(valid_dataset, valid_dataloader)
+        val_acc_sum += val_acc
+
+    val_acc_mean = val_acc_sum / kf.n_splits
+    print('val_acc_mean = {}'.format(val_acc_mean))
+    print('---------------------------------------')
+
+    if (val_acc_mean > max_val_acc):
+        max_val_acc = val_acc_mean
+        best_param = param
+        torch.save(model, '/workspace/nn/model_weight.pth')
+
+print('best param')
+print(best_param)
+print('max_val_acc = {}'.format(max_val_acc))
+
+
+# ベストスコアを出したモデルでテストスコアを出す
+model = torch.load('/workspace/nn/model_weight.pth')
+criterion = nn.CrossEntropyLoss()
+test_loss, test_acc = test(test_dataset, test_dataloader)
+print('test_acc = {}'.format(test_acc))

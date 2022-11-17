@@ -15,11 +15,13 @@ if dataset == 'mnist':
 elif dataset == 'usps':
     train_dataset, test_dataset, train_dataloader, test_dataloader = sample_data.get_usps_dataloader()
     image_size = 16*16
+elif dataset == 'covtype':
+    sample_data.get_covtype_dataloader()
 
 
-n_epochs = 100
-M = 1000
-lr = 1e-8
+n_epochs = 500
+M = 100
+lr = 1e-5
 lda1 = 1e-5 # λ'
 lda2 = 1e-10  # λ
 

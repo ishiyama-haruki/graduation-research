@@ -4,7 +4,7 @@ from scripts import sample_data
 import csv
 
 def plot(dataset):
-    
+
     train_logname = '/workspace/nn/results/{}/train_log.csv'.format(dataset)
     test_logname = '/workspace/nn/results/{}/test_log.csv'.format(dataset)
 

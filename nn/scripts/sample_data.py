@@ -1,5 +1,6 @@
 import torch
 from torchvision import datasets, transforms
+from sklearn.datasets import fetch_covtype
 import matplotlib.pyplot as plt
 
 # 変換方法の指定
@@ -18,8 +19,6 @@ def get_mnist_dataloader():
         download = True,        # データが無い時にダウンロードする
         transform = transform   # テンソルへの変換など
         )
-
-    save_data_img(train_dataset, 'mnist')
 
     # 評価用
     test_dataset = datasets.MNIST(
@@ -52,8 +51,6 @@ def get_usps_dataloader():
         transform = transform   # テンソルへの変換など
         )
 
-    save_data_img(train_dataset, 'usps')
-
     # 評価用
     test_dataset = datasets.USPS(
         '/workspace/nn/data', 
@@ -76,15 +73,11 @@ def get_usps_dataloader():
     return train_dataset, test_dataset, train_dataloader, test_dataloader
 
 
-
-def save_data_img(train_dataset, dataset_name):
-    # MNISTデータの表示
-    W = 5  # 横に並べる個数
-    H = 5   # 縦に並べる個数
-    fig = plt.figure(figsize=(H, W))
-    fig.subplots_adjust(left=0, right=1, bottom=0, top=1.0, hspace=0.05, wspace=0.05)
-    for i in range(W*H):
-        ax = fig.add_subplot(H, W, i + 1, xticks=[], yticks=[])
-        ax.imshow(train_dataset[i][0][0], cmap='gray')
-
-    plt.savefig('/workspace/nn/results/{}/sample.png'.format(dataset_name))
+def get_covtype_dataloader():
+    print('get_covtype_dataloader')
+    forest = fetch_covtype()
+    Data= forest['data']
+    label = forest['target']
+    print(Data.shape)
+    print('---------------------')
+    print(len(label))
