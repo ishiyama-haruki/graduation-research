@@ -7,17 +7,21 @@ import itertools
 from sklearn.model_selection import KFold
 from torch.utils.data.dataset import Subset
 from torch.utils.data import Dataset, DataLoader
+import sys
 
 learning_dataset, test_dataset, learning_dataloader, test_dataloader = sample_data.get_usps_dataloader()
 image_size = 16*16
 
 n_batch = 100
-n_epochs = [10, 100]
-M = [10, 100]
-lr = [1e-1, 1e-5]
-lda1 = [1e-5, 1e-10] # λ'
-lda2 = [1e-5, 1e-10]  # λ
+n_epochs = [100, 200]
+M = [100, 1000]
+lr = [1e-5]
+lda1 = [1e-5, 1e-8, 1e-10] # λ'
+lda2 = [1e-5, 1e-8, 1e-10]  # λ
 params = list(itertools.product(n_epochs, M, lr, lda1, lda2))
+
+print('nn_mfld_kfold_gs.py start!')
+sys.stdout.flush() # 明示的にflush
 
 
 # GPU(CUDA)が使えるかどうか？
@@ -142,6 +146,8 @@ for i, param in enumerate(params):
     val_acc_mean = val_acc_sum / kf.n_splits
     print('val_acc_mean = {}'.format(val_acc_mean))
     print('---------------------------------------')
+
+    sys.stdout.flush() # 明示的にflush
 
     if (val_acc_mean > max_val_acc):
         max_val_acc = val_acc_mean
