@@ -19,10 +19,10 @@ elif dataset == 'covtype':
     sample_data.get_covtype_dataloader()
 
 
-n_epochs = 500
-M = 100
+n_epochs = 100
+M = 1000
 lr = 1e-5
-lda1 = 1e-5 # λ'
+lda1 = 1e-8 # λ'
 lda2 = 1e-10  # λ
 
 train_logname = '/workspace/nn/results/{}/train_log.csv'.format(dataset)

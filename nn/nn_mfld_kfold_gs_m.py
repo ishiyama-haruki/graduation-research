@@ -20,7 +20,7 @@ lda1 = [1e-3, 1e-5, 1e-8, 1e-10] # λ'
 lda2 = [1e-3, 1e-5, 1e-8, 1e-10]  # λ
 params = list(itertools.product(n_epochs, M, lr, lda1, lda2))
 
-print('nn_mfld_kfold_gs.py start!')
+print('nn_mfld_kfold_gs_m.py start!')
 sys.stdout.flush() # 明示的にflush
 
 
@@ -77,7 +77,7 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
         # 重みの更新
         for p in model.parameters():
             noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-            p.data = (1 - 2 * lr * lda1) * p.data - lr * p.grad + np.sqrt(2*lr*lda2) * noise
+            p.data = (1 - 2 * lr*M * lda1) * p.data - lr*M * p.grad + np.sqrt(2*lr*M*lda2) * noise
     
     return loss_sum.item(), correct/len(train_dataset)
 
@@ -152,7 +152,7 @@ for i, param in enumerate(params):
     if (val_acc_mean > max_val_acc):
         max_val_acc = val_acc_mean
         best_param = param
-        torch.save(model, '/workspace/nn/normal/model_weight.pth')
+        torch.save(model, '/workspace/nn/m/model_weight.pth')
 
 print('best param')
 print(best_param)
@@ -160,7 +160,7 @@ print('max_val_acc = {}'.format(max_val_acc))
 
 
 # ベストスコアを出したモデルでテストスコアを出す
-model = torch.load('/workspace/nn/normal/model_weight.pth')
+model = torch.load('/workspace/nn/m/model_weight.pth')
 criterion = nn.CrossEntropyLoss()
 test_loss, test_acc = test(test_dataset, test_dataloader)
 print('test_acc = {}'.format(test_acc))

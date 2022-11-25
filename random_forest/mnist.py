@@ -35,3 +35,8 @@ print('best parameters')
 print(best_params)
 print('best train score = {}'.format(best_model.score(x_train, t_train)))
 print('test score by best moderl = {}'.format(best_model.score(x_test, t_test)))
+
+# best parameters
+# {'criterion': 'entropy', 'max_depth': None, 'min_samples_split': 10, 'n_estimators': 300}
+# best train score = 0.9992576095025983
+# test score by best moderl = 0.9222222222222223

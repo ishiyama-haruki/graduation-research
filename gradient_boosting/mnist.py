@@ -36,3 +36,8 @@ print('best parameters')
 print(best_params)
 print('best train score = {}'.format(best_model.score(x_train, t_train)))
 print('test score by best moderl = {}'.format(best_model.score(x_test, t_test)))
+
+# best parameters
+# {'eta': 0.1, 'gamma': 0, 'max_depth': 4, 'min_child_weigh': 1, 'n_estimators': 100, 'nthread': 2}
+# best train score = 1.0
+# test score by best moderl = 0.8888888888888888
