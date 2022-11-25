@@ -3,22 +3,30 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from scripts import sample_data
-import itertools
 from sklearn.model_selection import KFold
 from torch.utils.data.dataset import Subset
 from torch.utils.data import Dataset, DataLoader
 import sys
+import time
+import itertools
 
-learning_dataset, test_dataset, learning_dataloader, test_dataloader = sample_data.get_mnist_dataloader()
-image_size = 28*28
+dataset = sys.argv[1]
+n_epochs = int(sys.argv[2])
 
-n_batch = 100
-n_epochs = [100, 200, 300]
-M = [100, 500, 1000]
-lr = [1e-3, 1e-5, 1e-8, 1e-10]
-lda1 = [1e-3, 1e-5, 1e-8, 1e-10] # λ'
-lda2 = [1e-3, 1e-5, 1e-8, 1e-10]  # λ
-params = list(itertools.product(n_epochs, M, lr, lda1, lda2))
+
+if dataset == 'mnist':
+    learning_dataset, test_dataset, learning_dataloader, test_dataloader = sample_data.get_mnist_dataloader()
+    image_size = 28*28
+elif dataset == 'usps':
+    learning_dataset, test_dataset, learning_dataloader, test_dataloader = sample_data.get_usps_dataloader()
+    image_size = 16*16
+
+n_batch = 128
+M = [1000, 3000, 5000]
+lr = [1, 1e-1, 1e-2]
+lda1 = [1e-3, 1e-5, 1e-7] # λ'
+lda2 = [1e-3, 1e-5, 1e-7]  # λ
+params = list(itertools.product(M, lr, lda1, lda2))
 
 print('nn_mfld_kfold_gs.py start!')
 sys.stdout.flush() # 明示的にflush
@@ -33,6 +41,7 @@ class Net(nn.Module):
     def __init__(self, input_size, output_size):
         super(Net, self).__init__()
 
+        print('M: {}'.format(M))
         # 各クラスのインスタンス（入出力サイズなどの設定）
         self.fc1 = nn.Linear(input_size, M)
         self.fc2 = nn.Linear(M, output_size)
@@ -42,7 +51,7 @@ class Net(nn.Module):
         x = self.fc1(x)
         x = torch.sigmoid(x)
         x = self.fc2(x)
-        return F.log_softmax(x, dim=1)
+        return F.log_softmax(x, dim=1)/M
 
 #----------------------------------------------------------
 # 学習
@@ -77,7 +86,7 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
         # 重みの更新
         for p in model.parameters():
             noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-            p.data = (1 - 2 * lr * lda1) * p.data - lr * p.grad + np.sqrt(2*lr*lda2) * noise
+            p.data = (1 - 2 * lr*M * lda1) * p.data - lr*M * p.grad + np.sqrt(2*lr*M*lda2) * noise
     
     return loss_sum.item(), correct/len(train_dataset)
 
@@ -117,11 +126,12 @@ best_param = []
 for i, param in enumerate(params): 
     print('{}/{}'.format(i+1, len(params)))
     print(param)
-    n_epochs = param[0]
-    M = param[1]
-    lr =  param[2]
-    lda1 = param[3]
-    lda2 = param[4]
+    start_time = time.time()
+
+    M = param[0]
+    lr =  param[1]
+    lda1 = param[2]
+    lda2 = param[3]
 
     # ニューラルネットワークの生成
     model = Net(image_size, 10).cuda()
@@ -140,19 +150,24 @@ for i, param in enumerate(params):
 
         for epoch in range(n_epochs):
             train_loss, train_acc = train(train_dataset, train_dataloader, M, lr, lda1, lda2)
+            print('epoch: {} train_loss: {} train_acc: {}'.format(epoch, train_loss, train_acc))
         val_loss, val_acc = test(valid_dataset, valid_dataloader)
         val_acc_sum += val_acc
 
     val_acc_mean = val_acc_sum / kf.n_splits
     print('val_acc_mean = {}'.format(val_acc_mean))
-    print('---------------------------------------')
+
+    end_time = time.time()
+    print('time: {}'.format(end_time- start_time))
+
+    print('-------------------------------------------------------------------------')
 
     sys.stdout.flush() # 明示的にflush
 
     if (val_acc_mean > max_val_acc):
         max_val_acc = val_acc_mean
         best_param = param
-        torch.save(model, '/workspace/nn/normal/model_weight.pth')
+        torch.save(model, '/workspace/nn/results/{}/{}/model_weight.pth'.format(dataset, n_epochs))
 
 print('best param')
 print(best_param)
@@ -160,7 +175,7 @@ print('max_val_acc = {}'.format(max_val_acc))
 
 
 # ベストスコアを出したモデルでテストスコアを出す
-model = torch.load('/workspace/nn/normal/model_weight.pth')
+model = torch.load('/workspace/nn/results/{}/{}/model_weight.pth'.format(dataset, n_epochs))
 criterion = nn.CrossEntropyLoss()
 test_loss, test_acc = test(test_dataset, test_dataloader)
 print('test_acc = {}'.format(test_acc))

@@ -1,6 +1,6 @@
 import sys
 import matplotlib.pyplot as plt
-from scripts import sample_data
+import sample_data
 
 dataset = sys.argv[1]
 

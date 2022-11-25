@@ -8,6 +8,7 @@ import csv
 import sys
 
 dataset = sys.argv[1]
+n_epochs = int(sys.argv[2])
 
 if dataset == 'mnist':
     train_dataset, test_dataset, train_dataloader, test_dataloader = sample_data.get_mnist_dataloader()
@@ -18,15 +19,13 @@ elif dataset == 'usps':
 elif dataset == 'covtype':
     sample_data.get_covtype_dataloader()
 
+M = 3000
+lr = 1
+lda1 = 1e-5 # λ'
+lda2 = 1e-5  # λ
 
-n_epochs = 100
-M = 1000
-lr = 1e-5
-lda1 = 1e-8 # λ'
-lda2 = 1e-10  # λ
-
-train_logname = '/workspace/nn/results/{}/train_log.csv'.format(dataset)
-test_logname = '/workspace/nn/results/{}/test_log.csv'.format(dataset)
+train_logname = '/workspace/nn/results/{}/{}/train_log.csv'.format(dataset, n_epochs)
+test_logname = '/workspace/nn/results/{}/{}/test_log.csv'.format(dataset, n_epochs)
 
 # GPU(CUDA)が使えるかどうか？
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -47,7 +46,7 @@ class Net(nn.Module):
         x = self.fc1(x)
         x = torch.sigmoid(x)
         x = self.fc2(x)
-        return F.log_softmax(x, dim=1)
+        return F.log_softmax(x, dim=1)/M
 
 
 #----------------------------------------------------------
@@ -143,5 +142,5 @@ for epoch in range(n_epochs):
             test_logwriter.writerow([epoch, "{:.5f}".format(float(test_loss)), "{:.3f}".format(float(test_acc))])
 
 
-plot_from_csv.plot(dataset)
+plot_from_csv.plot(dataset, n_epochs)
 
