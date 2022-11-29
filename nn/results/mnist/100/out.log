@@ -2,306 +2,54 @@ nn_mfld_kfold_gs.py start!
 1/81
 (1000, 1, 0.001, 0.001)
 M: 1000
-epoch: 0 train_loss: 851.535888671875 train_acc: 0.033325
-epoch: 1 train_loss: 1280.3533935546875 train_acc: 0.02015
-epoch: 2 train_loss: 1921.6636962890625 train_acc: 0.01785
-epoch: 3 train_loss: 2512.136962890625 train_acc: 0.015475
-epoch: 4 train_loss: 2931.960693359375 train_acc: 0.016
-epoch: 5 train_loss: 3312.890380859375 train_acc: 0.01555
-epoch: 6 train_loss: 3608.9921875 train_acc: 0.019125
-epoch: 7 train_loss: 3873.073974609375 train_acc: 0.0307
-epoch: 8 train_loss: 4086.19287109375 train_acc: 0.038725
-epoch: 9 train_loss: 4305.21044921875 train_acc: 0.046875
-epoch: 10 train_loss: 4457.2158203125 train_acc: 0.053325
-epoch: 11 train_loss: 4543.19287109375 train_acc: 0.05665
-epoch: 12 train_loss: 4682.72802734375 train_acc: 0.058175
-epoch: 13 train_loss: 4843.7421875 train_acc: 0.0612
-epoch: 14 train_loss: 4890.53857421875 train_acc: 0.061825
-epoch: 15 train_loss: 5055.4326171875 train_acc: 0.061425
-epoch: 16 train_loss: 5169.69775390625 train_acc: 0.0642
-epoch: 17 train_loss: 5321.94140625 train_acc: 0.067925
-epoch: 18 train_loss: 5438.119140625 train_acc: 0.068625
-epoch: 19 train_loss: 5497.45166015625 train_acc: 0.0676
-epoch: 20 train_loss: 5772.1259765625 train_acc: 0.063425
-epoch: 21 train_loss: 5854.03271484375 train_acc: 0.060025
-epoch: 22 train_loss: 5873.2001953125 train_acc: 0.062825
-epoch: 23 train_loss: 6033.28125 train_acc: 0.0663
-epoch: 24 train_loss: 6149.97412109375 train_acc: 0.0669
-epoch: 25 train_loss: 6218.1435546875 train_acc: 0.064925
-epoch: 26 train_loss: 6295.88232421875 train_acc: 0.064725
-epoch: 27 train_loss: 6348.05908203125 train_acc: 0.06345
-epoch: 28 train_loss: 6632.359375 train_acc: 0.059025
-epoch: 29 train_loss: 6739.0556640625 train_acc: 0.060525
-epoch: 30 train_loss: 6863.5498046875 train_acc: 0.059675
-epoch: 31 train_loss: 6960.40869140625 train_acc: 0.0616
-epoch: 32 train_loss: 7174.5322265625 train_acc: 0.062725
-epoch: 33 train_loss: 7310.64111328125 train_acc: 0.068275
-epoch: 34 train_loss: 7464.5791015625 train_acc: 0.068525
-epoch: 35 train_loss: 7620.328125 train_acc: 0.068475
-epoch: 36 train_loss: 7703.00537109375 train_acc: 0.06885
-epoch: 37 train_loss: 7630.5009765625 train_acc: 0.06975
-epoch: 38 train_loss: 7665.12353515625 train_acc: 0.068175
-epoch: 39 train_loss: 7719.47119140625 train_acc: 0.07185
-epoch: 40 train_loss: 7783.4169921875 train_acc: 0.07075
-epoch: 41 train_loss: 7855.544921875 train_acc: 0.069775
-epoch: 42 train_loss: 8044.45458984375 train_acc: 0.067075
-epoch: 43 train_loss: 7989.7197265625 train_acc: 0.06745
-epoch: 44 train_loss: 8024.05615234375 train_acc: 0.0656
-epoch: 45 train_loss: 8070.12548828125 train_acc: 0.0627
-epoch: 46 train_loss: 8168.42822265625 train_acc: 0.060875
-epoch: 47 train_loss: 8147.67333984375 train_acc: 0.062525
-epoch: 48 train_loss: 8322.041015625 train_acc: 0.063125
-epoch: 49 train_loss: 8410.55859375 train_acc: 0.062725
-epoch: 50 train_loss: 8472.9833984375 train_acc: 0.0625
-epoch: 51 train_loss: 8507.853515625 train_acc: 0.060825
-epoch: 52 train_loss: 8547.7744140625 train_acc: 0.0606
-epoch: 53 train_loss: 8529.005859375 train_acc: 0.062775
-epoch: 54 train_loss: 8626.173828125 train_acc: 0.0611
-epoch: 55 train_loss: 8684.4267578125 train_acc: 0.0619
-epoch: 56 train_loss: 8766.189453125 train_acc: 0.05975
-epoch: 57 train_loss: 8840.609375 train_acc: 0.0588
-epoch: 58 train_loss: 8965.5419921875 train_acc: 0.0563
-epoch: 59 train_loss: 8896.7861328125 train_acc: 0.057975
-epoch: 60 train_loss: 8949.6591796875 train_acc: 0.05675
-epoch: 61 train_loss: 9028.921875 train_acc: 0.05715
-epoch: 62 train_loss: 9016.7021484375 train_acc: 0.0563
-epoch: 63 train_loss: 9150.5126953125 train_acc: 0.055175
-epoch: 64 train_loss: 9204.931640625 train_acc: 0.057525
-epoch: 65 train_loss: 9377.63671875 train_acc: 0.056225
-epoch: 66 train_loss: 9388.6005859375 train_acc: 0.0577
-epoch: 67 train_loss: 9495.685546875 train_acc: 0.05785
-epoch: 68 train_loss: 9439.3037109375 train_acc: 0.058825
-epoch: 69 train_loss: 9624.81640625 train_acc: 0.058675
-epoch: 70 train_loss: 9680.837890625 train_acc: 0.057275
-epoch: 71 train_loss: 9742.5166015625 train_acc: 0.057375
-epoch: 72 train_loss: 9708.1845703125 train_acc: 0.059275
-epoch: 73 train_loss: 9939.9912109375 train_acc: 0.0582
-epoch: 74 train_loss: 9935.833984375 train_acc: 0.0596
-epoch: 75 train_loss: 10030.7822265625 train_acc: 0.0597
-epoch: 76 train_loss: 10054.80859375 train_acc: 0.0605
-epoch: 77 train_loss: 10345.3466796875 train_acc: 0.060925
-epoch: 78 train_loss: 10384.2421875 train_acc: 0.060075
-epoch: 79 train_loss: 10367.95703125 train_acc: 0.060125
-epoch: 80 train_loss: 10272.294921875 train_acc: 0.06105
-epoch: 81 train_loss: 10346.3037109375 train_acc: 0.06275
-epoch: 82 train_loss: 10529.23046875 train_acc: 0.0616
-epoch: 83 train_loss: 10495.765625 train_acc: 0.063175
-epoch: 84 train_loss: 10531.7763671875 train_acc: 0.0634
-epoch: 85 train_loss: 10683.4208984375 train_acc: 0.062825
-epoch: 86 train_loss: 10741.595703125 train_acc: 0.0657
-epoch: 87 train_loss: 10914.8818359375 train_acc: 0.064575
-epoch: 88 train_loss: 10997.302734375 train_acc: 0.0613
-epoch: 89 train_loss: 11114.1083984375 train_acc: 0.062375
-epoch: 90 train_loss: 11142.947265625 train_acc: 0.062475
-epoch: 91 train_loss: 11111.5859375 train_acc: 0.0615
-epoch: 92 train_loss: 11107.96875 train_acc: 0.06205
-epoch: 93 train_loss: 11191.8818359375 train_acc: 0.06425
-epoch: 94 train_loss: 11342.603515625 train_acc: 0.063675
-epoch: 95 train_loss: 11337.26953125 train_acc: 0.065525
-epoch: 96 train_loss: 11324.7783203125 train_acc: 0.062625
-epoch: 97 train_loss: 11509.1572265625 train_acc: 0.06255
-epoch: 98 train_loss: 11687.501953125 train_acc: 0.06185
-epoch: 99 train_loss: 11825.34375 train_acc: 0.06355
-epoch: 0 train_loss: 11983.4404296875 train_acc: 0.064775
-epoch: 1 train_loss: 12010.1484375 train_acc: 0.064625
-epoch: 2 train_loss: 12248.9765625 train_acc: 0.065525
-epoch: 3 train_loss: 12316.0498046875 train_acc: 0.0663
-epoch: 4 train_loss: 12327.2548828125 train_acc: 0.0669
-epoch: 5 train_loss: 12557.65625 train_acc: 0.064175
-epoch: 6 train_loss: 12462.1240234375 train_acc: 0.06505
-epoch: 7 train_loss: 12506.953125 train_acc: 0.0655
-epoch: 8 train_loss: 12529.169921875 train_acc: 0.065475
-epoch: 9 train_loss: 12720.380859375 train_acc: 0.064525
-epoch: 10 train_loss: 12991.78125 train_acc: 0.06405
-epoch: 11 train_loss: 13035.814453125 train_acc: 0.065225
-epoch: 12 train_loss: 13220.25390625 train_acc: 0.065925
-epoch: 13 train_loss: 13048.662109375 train_acc: 0.067725
-epoch: 14 train_loss: 13323.2978515625 train_acc: 0.06635
-epoch: 15 train_loss: 13291.25390625 train_acc: 0.069
-epoch: 16 train_loss: 13336.9453125 train_acc: 0.0689
-epoch: 17 train_loss: 13480.7490234375 train_acc: 0.067325
-epoch: 18 train_loss: 13505.0185546875 train_acc: 0.068525
-epoch: 19 train_loss: 13534.1005859375 train_acc: 0.067325
-epoch: 20 train_loss: 13557.451171875 train_acc: 0.067875
-epoch: 21 train_loss: 13682.654296875 train_acc: 0.066925
-epoch: 22 train_loss: 13698.306640625 train_acc: 0.068575
-epoch: 23 train_loss: 13834.3984375 train_acc: 0.067075
-epoch: 24 train_loss: 14060.4619140625 train_acc: 0.062575
-epoch: 25 train_loss: 14153.91015625 train_acc: 0.064475
-epoch: 26 train_loss: 14211.701171875 train_acc: 0.062425
-epoch: 27 train_loss: 14308.9482421875 train_acc: 0.063325
-epoch: 28 train_loss: 14399.1875 train_acc: 0.06215
-epoch: 29 train_loss: 14404.2998046875 train_acc: 0.06225
-epoch: 30 train_loss: 14515.8701171875 train_acc: 0.062075
-epoch: 31 train_loss: 14650.919921875 train_acc: 0.06055
-epoch: 32 train_loss: 14432.251953125 train_acc: 0.062525
-epoch: 33 train_loss: 14607.3115234375 train_acc: 0.06115
-epoch: 34 train_loss: 14684.232421875 train_acc: 0.060325
-epoch: 35 train_loss: 14945.865234375 train_acc: 0.0576
-epoch: 36 train_loss: 14710.796875 train_acc: 0.0591
-epoch: 37 train_loss: 14765.2978515625 train_acc: 0.05925
-epoch: 38 train_loss: 14930.9169921875 train_acc: 0.057225
-epoch: 39 train_loss: 14967.576171875 train_acc: 0.05795
-epoch: 40 train_loss: 14971.740234375 train_acc: 0.056375
-epoch: 41 train_loss: 15108.1015625 train_acc: 0.05565
-epoch: 42 train_loss: 15267.66796875 train_acc: 0.056725
-epoch: 43 train_loss: 15308.865234375 train_acc: 0.05725
-epoch: 44 train_loss: 15369.6142578125 train_acc: 0.057275
-epoch: 45 train_loss: 15411.1064453125 train_acc: 0.05665
-epoch: 46 train_loss: 15459.8662109375 train_acc: 0.05655
-epoch: 47 train_loss: 15334.82421875 train_acc: 0.0579
-epoch: 48 train_loss: 15358.7255859375 train_acc: 0.05895
-epoch: 49 train_loss: 15688.8359375 train_acc: 0.058525
-epoch: 50 train_loss: 15585.517578125 train_acc: 0.059675
-epoch: 51 train_loss: 15651.3466796875 train_acc: 0.05815
-epoch: 52 train_loss: 15826.7646484375 train_acc: 0.057325
-epoch: 53 train_loss: 15827.1962890625 train_acc: 0.058025
-epoch: 54 train_loss: 15757.1591796875 train_acc: 0.05855
-epoch: 55 train_loss: 16076.3671875 train_acc: 0.057725
-epoch: 56 train_loss: 15955.1337890625 train_acc: 0.05995
-epoch: 57 train_loss: 16246.970703125 train_acc: 0.057575
-epoch: 58 train_loss: 16160.4921875 train_acc: 0.05735
-epoch: 59 train_loss: 16065.1728515625 train_acc: 0.06055
-epoch: 60 train_loss: 16168.943359375 train_acc: 0.058925
-epoch: 61 train_loss: 16165.439453125 train_acc: 0.0599
-epoch: 62 train_loss: 16297.55078125 train_acc: 0.05875
-epoch: 63 train_loss: 16354.1787109375 train_acc: 0.05945
-epoch: 64 train_loss: 16579.677734375 train_acc: 0.0579
-epoch: 65 train_loss: 16780.09765625 train_acc: 0.057775
-epoch: 66 train_loss: 16424.91796875 train_acc: 0.06145
-epoch: 67 train_loss: 16525.4609375 train_acc: 0.061175
-epoch: 68 train_loss: 16620.177734375 train_acc: 0.061425
-epoch: 69 train_loss: 16587.794921875 train_acc: 0.06335
-epoch: 70 train_loss: 16663.09765625 train_acc: 0.064775
-epoch: 71 train_loss: 16691.55078125 train_acc: 0.0663
-epoch: 72 train_loss: 16953.826171875 train_acc: 0.06625
-epoch: 73 train_loss: 17147.85546875 train_acc: 0.067525
-epoch: 74 train_loss: 17187.279296875 train_acc: 0.068475
-epoch: 75 train_loss: 17336.306640625 train_acc: 0.0671
-epoch: 76 train_loss: 17269.509765625 train_acc: 0.067925
-epoch: 77 train_loss: 17392.470703125 train_acc: 0.07155
-epoch: 78 train_loss: 17340.953125 train_acc: 0.072575
-epoch: 79 train_loss: 17355.447265625 train_acc: 0.074075
-epoch: 80 train_loss: 17417.7734375 train_acc: 0.073475
-epoch: 81 train_loss: 17570.537109375 train_acc: 0.0715
-epoch: 82 train_loss: 17482.880859375 train_acc: 0.0712
-epoch: 83 train_loss: 17680.138671875 train_acc: 0.06675
-epoch: 84 train_loss: 17550.482421875 train_acc: 0.06815
-epoch: 85 train_loss: 17620.37109375 train_acc: 0.06725
-epoch: 86 train_loss: 17793.8203125 train_acc: 0.0652
-epoch: 87 train_loss: 17780.65625 train_acc: 0.066975
-epoch: 88 train_loss: 18027.84375 train_acc: 0.066375
-epoch: 89 train_loss: 18096.716796875 train_acc: 0.06595
-epoch: 90 train_loss: 18060.75 train_acc: 0.064975
-epoch: 91 train_loss: 18175.40234375 train_acc: 0.0659
-epoch: 92 train_loss: 18117.564453125 train_acc: 0.065125
-epoch: 93 train_loss: 18381.89453125 train_acc: 0.0663
-epoch: 94 train_loss: 18434.154296875 train_acc: 0.064975
-epoch: 95 train_loss: 18123.36328125 train_acc: 0.066775
-epoch: 96 train_loss: 18143.0 train_acc: 0.066925
-epoch: 97 train_loss: 18539.033203125 train_acc: 0.062
-epoch: 98 train_loss: 18328.005859375 train_acc: 0.063625
-epoch: 99 train_loss: 18150.517578125 train_acc: 0.064825
-epoch: 0 train_loss: 18364.97265625 train_acc: 0.061975
-epoch: 1 train_loss: 18475.857421875 train_acc: 0.06055
-epoch: 2 train_loss: 18565.125 train_acc: 0.061275
-epoch: 3 train_loss: 18781.583984375 train_acc: 0.061175
-epoch: 4 train_loss: 18803.404296875 train_acc: 0.061225
-epoch: 5 train_loss: 18884.798828125 train_acc: 0.060525
-epoch: 6 train_loss: 18635.17578125 train_acc: 0.0595
-epoch: 7 train_loss: 18718.818359375 train_acc: 0.060175
-epoch: 8 train_loss: 18912.615234375 train_acc: 0.060025
-epoch: 9 train_loss: 19179.7578125 train_acc: 0.0595
-epoch: 10 train_loss: 18931.193359375 train_acc: 0.062225
-epoch: 11 train_loss: 18902.767578125 train_acc: 0.06465
-epoch: 12 train_loss: 19265.55078125 train_acc: 0.059775
-epoch: 13 train_loss: 18934.732421875 train_acc: 0.062425
-epoch: 14 train_loss: 19051.541015625 train_acc: 0.061675
-epoch: 15 train_loss: 19222.69921875 train_acc: 0.0622
-epoch: 16 train_loss: 19366.6328125 train_acc: 0.0614
-epoch: 17 train_loss: 19425.626953125 train_acc: 0.063125
-epoch: 18 train_loss: 19265.861328125 train_acc: 0.06525
-epoch: 19 train_loss: 19140.72265625 train_acc: 0.065225
-epoch: 20 train_loss: 19337.005859375 train_acc: 0.06255
-epoch: 21 train_loss: 19312.671875 train_acc: 0.062025
-epoch: 22 train_loss: 19472.833984375 train_acc: 0.06165
-epoch: 23 train_loss: 19415.5234375 train_acc: 0.0644
-epoch: 24 train_loss: 19365.701171875 train_acc: 0.062675
-epoch: 25 train_loss: 19457.748046875 train_acc: 0.065225
-epoch: 26 train_loss: 19455.794921875 train_acc: 0.063975
-epoch: 27 train_loss: 19584.546875 train_acc: 0.0641
-epoch: 28 train_loss: 19750.98046875 train_acc: 0.0626
-epoch: 29 train_loss: 19622.134765625 train_acc: 0.062
-epoch: 30 train_loss: 19708.224609375 train_acc: 0.06155
-epoch: 31 train_loss: 19818.37109375 train_acc: 0.061625
-epoch: 32 train_loss: 19984.232421875 train_acc: 0.0632
-epoch: 33 train_loss: 20239.287109375 train_acc: 0.0624
-epoch: 34 train_loss: 20039.439453125 train_acc: 0.06385
-epoch: 35 train_loss: 20144.849609375 train_acc: 0.0642
-epoch: 36 train_loss: 20375.8828125 train_acc: 0.065975
-epoch: 37 train_loss: 20093.396484375 train_acc: 0.07035
-epoch: 38 train_loss: 20613.20703125 train_acc: 0.067775
-epoch: 39 train_loss: 20425.51953125 train_acc: 0.0674
-epoch: 40 train_loss: 20556.86328125 train_acc: 0.06705
-epoch: 41 train_loss: 20536.861328125 train_acc: 0.0671
-epoch: 42 train_loss: 20673.396484375 train_acc: 0.068225
-epoch: 43 train_loss: 20717.4921875 train_acc: 0.066775
-epoch: 44 train_loss: 20617.5 train_acc: 0.065875
-epoch: 45 train_loss: 20625.59375 train_acc: 0.064425
-epoch: 46 train_loss: 20808.958984375 train_acc: 0.062725
-epoch: 47 train_loss: 20578.287109375 train_acc: 0.06405
-epoch: 48 train_loss: 20775.1875 train_acc: 0.064225
-epoch: 49 train_loss: 20617.021484375 train_acc: 0.0645
-epoch: 50 train_loss: 21044.216796875 train_acc: 0.064575
-epoch: 51 train_loss: 21053.357421875 train_acc: 0.0627
-epoch: 52 train_loss: 21106.763671875 train_acc: 0.0634
-epoch: 53 train_loss: 20792.5625 train_acc: 0.064925
-epoch: 54 train_loss: 21210.1796875 train_acc: 0.062125
-epoch: 55 train_loss: 20841.318359375 train_acc: 0.06565
-epoch: 56 train_loss: 20998.41796875 train_acc: 0.06275
-epoch: 57 train_loss: 20947.767578125 train_acc: 0.064775
-epoch: 58 train_loss: 21132.42578125 train_acc: 0.0622
-epoch: 59 train_loss: 21331.099609375 train_acc: 0.06115
-epoch: 60 train_loss: 21265.453125 train_acc: 0.06335
-epoch: 61 train_loss: 21293.3046875 train_acc: 0.064675
-epoch: 62 train_loss: 21659.517578125 train_acc: 0.06075
-epoch: 63 train_loss: 21252.611328125 train_acc: 0.06145
-epoch: 64 train_loss: 21392.798828125 train_acc: 0.0597
-epoch: 65 train_loss: 21717.634765625 train_acc: 0.05915
-epoch: 66 train_loss: 21545.634765625 train_acc: 0.059
-epoch: 67 train_loss: 21195.287109375 train_acc: 0.06135
-epoch: 68 train_loss: 21511.71484375 train_acc: 0.05835
-epoch: 69 train_loss: 21386.083984375 train_acc: 0.060075
-epoch: 70 train_loss: 21422.1640625 train_acc: 0.061025
-epoch: 71 train_loss: 21435.56640625 train_acc: 0.061425
-epoch: 72 train_loss: 21582.24609375 train_acc: 0.059425
-epoch: 73 train_loss: 21182.232421875 train_acc: 0.0625
-epoch: 74 train_loss: 21298.953125 train_acc: 0.060825
-epoch: 75 train_loss: 21451.28125 train_acc: 0.05935
-epoch: 76 train_loss: 21483.74609375 train_acc: 0.05905
-epoch: 77 train_loss: 21666.00390625 train_acc: 0.0582
-epoch: 78 train_loss: 21360.25390625 train_acc: 0.059475
-epoch: 79 train_loss: 21529.93359375 train_acc: 0.06085
-epoch: 80 train_loss: 21606.54296875 train_acc: 0.05985
-epoch: 81 train_loss: 21808.248046875 train_acc: 0.05895
-epoch: 82 train_loss: 21627.703125 train_acc: 0.0607
-epoch: 83 train_loss: 22010.9921875 train_acc: 0.05745
-epoch: 84 train_loss: 21838.67578125 train_acc: 0.05855
-epoch: 85 train_loss: 21866.59765625 train_acc: 0.057375
-epoch: 86 train_loss: 21673.984375 train_acc: 0.05925
-epoch: 87 train_loss: 21899.08203125 train_acc: 0.057125
-epoch: 88 train_loss: 21799.509765625 train_acc: 0.0574
-epoch: 89 train_loss: 21945.12890625 train_acc: 0.057325
-epoch: 90 train_loss: 21815.18359375 train_acc: 0.057825
-epoch: 91 train_loss: 22276.8203125 train_acc: 0.05675
-epoch: 92 train_loss: 22175.146484375 train_acc: 0.057525
-epoch: 93 train_loss: 22310.572265625 train_acc: 0.056775
-epoch: 94 train_loss: 22189.181640625 train_acc: 0.056725
-epoch: 95 train_loss: 22548.751953125 train_acc: 0.056025
-epoch: 96 train_loss: 22349.451171875 train_acc: 0.0577
-epoch: 97 train_loss: 22598.896484375 train_acc: 0.056775
-epoch: 98 train_loss: 22374.521484375 train_acc: 0.057175
-epoch: 99 train_loss: 22581.9921875 train_acc: 0.056925
-val_acc_mean = 0.020066666666666667
-time: 1013.5692389011383
----------------------------------------
+val_acc_mean = 0.10218333333333333
+time: 289.1142420768738
+-------------------------------------------------------------------------
+2/81
+(1000, 1, 0.001, 1e-05)
+M: 1000
+val_acc_mean = 0.11041666666666666
+time: 286.335485458374
+-------------------------------------------------------------------------
+3/81
+(1000, 1, 0.001, 1e-07)
+M: 1000
+val_acc_mean = 0.10441666666666667
+time: 286.86830592155457
+-------------------------------------------------------------------------
+4/81
+(1000, 1, 1e-05, 0.001)
+M: 1000
+val_acc_mean = 0.9300166666666666
+time: 286.9713318347931
+-------------------------------------------------------------------------
+5/81
+(1000, 1, 1e-05, 1e-05)
+M: 1000
+val_acc_mean = 0.9141166666666667
+time: 285.3543236255646
+-------------------------------------------------------------------------
+6/81
+(1000, 1, 1e-05, 1e-07)
+M: 1000
+val_acc_mean = 0.91235
+time: 279.8458867073059
+-------------------------------------------------------------------------
+7/81
+(1000, 1, 1e-07, 0.001)
+M: 1000
+val_acc_mean = 0.28045000000000003
+time: 289.3328399658203
+-------------------------------------------------------------------------
+8/81
+(1000, 1, 1e-07, 1e-05)
+M: 1000
+val_acc_mean = 0.23775000000000002
+time: 293.4520242214203
+-------------------------------------------------------------------------
+9/81
+(1000, 1, 1e-07, 1e-07)
+M: 1000
+val_acc_mean = 0.2770333333333333
+time: 293.95993280410767
+-------------------------------------------------------------------------

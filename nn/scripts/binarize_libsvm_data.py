@@ -32,7 +32,7 @@ def preprocess( datafile_name, xdic=None, ydic=None, bz2_f=True ):
         if int( i % 0.1*len(lines) ) == 0:
             print ('.', end='' )
         y_ = int(l[0])
-        kvs = [ (int(s.split(u':')[0]), float(s.split(u':')[1]) ) for s in l[1:] ]
+        kvs = [ (int(s.split(b':')[0]), float(s.split(b':')[1]) ) for s in l[1:] ]
         if y_ not in ydic:
             label = len(ydic)
             ydic[y_] = label

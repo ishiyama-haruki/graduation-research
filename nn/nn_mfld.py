@@ -11,18 +11,61 @@ dataset = sys.argv[1]
 n_epochs = int(sys.argv[2])
 
 if dataset == 'mnist':
-    train_dataset, test_dataset, train_dataloader, test_dataloader = sample_data.get_mnist_dataloader()
-    image_size = 28*28
+    X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_mnist()
 elif dataset == 'usps':
-    train_dataset, test_dataset, train_dataloader, test_dataloader = sample_data.get_usps_dataloader()
-    image_size = 16*16
+    X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_usps()
 elif dataset == 'covtype':
-    sample_data.get_covtype_dataloader()
+    X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_covtype()
+elif dataset == 'ijcnn1':
+    X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_ijcnn1()
+elif dataset == 'letter':
+    X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_letter()
+elif dataset == 'susy':
+    X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
-M = 3000
-lr = 1
-lda1 = 1e-5 # λ'
-lda2 = 1e-5  # λ
+if dataset == 'mnist':
+    M = 5000
+    lr = 0.01
+    lda1 = 1e-5 # λ'
+    lda2 = 1e-5  # λ
+    image_size = 719  #前処理の影響？で28x28ではない
+    output_size = 10
+elif dataset == 'usps':
+    M = 5000
+    lr = 1
+    lda1 = 1e-5 # λ'
+    lda2 = 1e-5  # λ
+    image_size = 16*16
+    output_size = 10
+elif dataset == 'covtype':
+    M = 5000
+    lr = 1
+    lda1 = 1e-5 # λ'
+    lda2 = 1e-5  # λ
+    image_size = 54
+    output_size = 7
+elif dataset == 'ijcnn1':
+    M = 
+    lr = 
+    lda1 =  # λ'
+    lda2 =   # λ
+    image_size = 22
+    output_size = 2
+elif dataset == 'letter':
+    M = 
+    lr = 
+    lda1 =  # λ'
+    lda2 =   # λ
+    image_size = 16*16
+    output_size = 26
+elif dataset == 'susy':
+    M = 
+    lr = 
+    lda1 =  # λ'
+    lda2 =   # λ
+    image_size = 16*16
+    output_size = 2
+
 
 train_logname = '/workspace/nn/results/{}/{}/train_log.csv'.format(dataset, n_epochs)
 test_logname = '/workspace/nn/results/{}/{}/test_log.csv'.format(dataset, n_epochs)
@@ -51,7 +94,7 @@ class Net(nn.Module):
 
 #----------------------------------------------------------
 # ニューラルネットワークの生成
-model = Net(image_size, 10).cuda()
+model = Net(image_size, output_size).cuda()
 
 #----------------------------------------------------------
 # 損失関数の設定
@@ -64,18 +107,19 @@ def train(epoch):
 
     loss_sum = 0
     correct = 0
+    data_num = 0
 
     for inputs, labels in train_dataloader:
-        
         # GPUが使えるならGPUにデータを送る
         inputs = inputs.cuda()
         labels = labels.cuda()
 
         # ニューラルネットワークの処理を行う
-        inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び替える
+        # inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び替える
         outputs = model.forward(inputs)
 
         # 損失計算
+        labels = labels.long()
         loss = criterion(outputs, labels)
         loss_sum += loss
 
@@ -83,6 +127,9 @@ def train(epoch):
         pred = outputs.argmax(1)
         #正解数をカウント
         correct += pred.eq(labels.view_as(pred)).sum().item()
+
+        #データ数をカウント
+        data_num += len(inputs)
 
         # 勾配計算
         loss.backward()
@@ -92,7 +139,7 @@ def train(epoch):
             noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
             p.data = (1 - 2 * lr*M * lda1) * p.data - lr*M * p.grad + np.sqrt(2*lr*M*lda2) * noise
     
-    return loss_sum.item(), correct/len(train_dataset)
+    return loss_sum.item(), correct/data_num
 
 
 #----------------------------------------------------------
@@ -102,6 +149,7 @@ def test(epoch):
 
     loss_sum = 0
     correct = 0
+    data_num = 0
 
     with torch.no_grad():
         for inputs, labels in test_dataloader:
@@ -110,10 +158,11 @@ def test(epoch):
             labels = labels.cuda()
 
             # ニューラルネットワークの処理を行う
-            inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び変える
+            # inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び変える
             outputs = model(inputs)
 
             # 損失(出力とラベルとの誤差)の計算
+            labels = labels.long()
             loss_sum += criterion(outputs, labels)
 
             # 正解の値を取得
@@ -121,7 +170,10 @@ def test(epoch):
             #正解数をカウント
             correct += pred.eq(labels.view_as(pred)).sum().item()
 
-    return loss_sum.item(), correct/len(test_dataset)
+            #データ数をカウント
+            data_num += len(inputs)
+
+    return loss_sum.item(), correct/data_num
 
 
 

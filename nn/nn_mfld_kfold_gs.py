@@ -15,11 +15,21 @@ n_epochs = int(sys.argv[2])
 
 
 if dataset == 'mnist':
-    learning_dataset, test_dataset, learning_dataloader, test_dataloader = sample_data.get_mnist_dataloader()
-    image_size = 28*28
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_mnist()
+    image_size = 719  #前処理の影響？で28x28ではない
+    output_size = 10
 elif dataset == 'usps':
-    learning_dataset, test_dataset, learning_dataloader, test_dataloader = sample_data.get_usps_dataloader()
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_usps()
     image_size = 16*16
+    output_size = 10
+elif dataset == 'covtype':
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_covtype()
+    image_size = 54
+    output_size = 7
+elif dataset == 'ijcnn1':
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_ijcnn1()
+    image_size = 22
+    output_size = 2
 
 n_batch = 128
 M = [1000, 3000, 5000]
@@ -60,6 +70,7 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
 
     loss_sum = 0
     correct = 0
+    data_num = 0
 
     for inputs, labels in train_dataloader:
         
@@ -68,10 +79,11 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
         labels = labels.cuda()
 
         # ニューラルネットワークの処理を行う
-        inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び替える
+        # inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び替える
         outputs = model.forward(inputs)
 
         # 損失計算
+        labels = labels.long()
         loss = criterion(outputs, labels)
         loss_sum += loss
 
@@ -80,6 +92,9 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
         #正解数をカウント
         correct += pred.eq(labels.view_as(pred)).sum().item()
 
+        #データ数をカウント
+        data_num += len(inputs)
+
         # 勾配計算
         loss.backward()
 
@@ -87,8 +102,8 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
         for p in model.parameters():
             noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
             p.data = (1 - 2 * lr*M * lda1) * p.data - lr*M * p.grad + np.sqrt(2*lr*M*lda2) * noise
-    
-    return loss_sum.item(), correct/len(train_dataset)
+
+    return loss_sum.item(), correct/data_num
 
 
 #----------------------------------------------------------
@@ -98,6 +113,7 @@ def test(dataset, dataloader):
 
     loss_sum = 0
     correct = 0
+    data_num = 0
 
     with torch.no_grad():
         for inputs, labels in dataloader:
@@ -106,10 +122,11 @@ def test(dataset, dataloader):
             labels = labels.cuda()
 
             # ニューラルネットワークの処理を行う
-            inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び変える
+            # inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び変える
             outputs = model(inputs)
 
             # 損失(出力とラベルとの誤差)の計算
+            labels = labels.long()
             loss_sum += criterion(outputs, labels)
 
             # 正解の値を取得
@@ -117,7 +134,10 @@ def test(dataset, dataloader):
             #正解数をカウント
             correct += pred.eq(labels.view_as(pred)).sum().item()
 
-    return loss_sum.item(), correct/len(dataset)
+            #データ数をカウント
+            data_num += len(inputs)
+
+    return loss_sum.item(), correct/data_num
 
 
 max_val_acc = 0
@@ -134,7 +154,7 @@ for i, param in enumerate(params):
     lda2 = param[3]
 
     # ニューラルネットワークの生成
-    model = Net(image_size, 10).cuda()
+    model = Net(image_size, output_size).cuda()
     #----------------------------------------------------------
     # 損失関数の設定
     criterion = nn.CrossEntropyLoss()
@@ -142,7 +162,7 @@ for i, param in enumerate(params):
     # クロスバリデーション
     kf = KFold(n_splits=3, shuffle=True)
     val_acc_sum = 0
-    for train_index, valid_index in kf.split(learning_dataset.data):
+    for train_index, valid_index in kf.split(X):
         train_dataset = Subset(learning_dataset, train_index)
         train_dataloader = DataLoader(train_dataset, n_batch, shuffle=True)
         valid_dataset   = Subset(learning_dataset, valid_index)
@@ -150,7 +170,7 @@ for i, param in enumerate(params):
 
         for epoch in range(n_epochs):
             train_loss, train_acc = train(train_dataset, train_dataloader, M, lr, lda1, lda2)
-            print('epoch: {} train_loss: {} train_acc: {}'.format(epoch, train_loss, train_acc))
+            # print('epoch: {} train_loss: {} train_acc: {}'.format(epoch, train_loss, train_acc))
         val_loss, val_acc = test(valid_dataset, valid_dataloader)
         val_acc_sum += val_acc
 

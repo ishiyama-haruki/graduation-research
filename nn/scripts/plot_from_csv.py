@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scripts import sample_data
 import csv
 
 def plot(dataset, n_epochs):

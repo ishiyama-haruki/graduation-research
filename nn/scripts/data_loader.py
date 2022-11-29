@@ -1,6 +1,10 @@
+# config : utf-8
+
+from __future__ import print_function, absolute_import, division, unicode_literals
 import sys
 import numpy as np
-
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from .preprocess import max_scale, add_bias, normalize_l2
 if sys.version_info[0] == 2:
     import cPickle
 else:
@@ -26,7 +30,7 @@ def load( trainfile_name, testfile_name,
         fin.close()
     elif testfile_name is None and split:
         train_size = int( train_ratio * X.shape[0] )
-        indices = range( X.shape[0] )
+        indices = list(range( X.shape[0] ))
         if shuffle:
             np.random.shuffle( indices )
         train_mask = indices[:train_size]
@@ -39,28 +43,28 @@ def load( trainfile_name, testfile_name,
         Xt = None
         Yt = None
         
-    # if standardize:
-    #     scaler = StandardScaler()
-    #     scaler.fit( X )
-    #     X  = scaler.transform( X )
-    #     if Xt is not None:
-    #         Xt = scaler.transform( Xt )
+    if standardize:
+        scaler = StandardScaler()
+        scaler.fit( X )
+        X  = scaler.transform( X )
+        if Xt is not None:
+            Xt = scaler.transform( Xt )
 
-    # if scale:
-    #     scaler = MinMaxScaler()
-    #     X = scaler.fit_transform(X)
-    #     if Xt is not None:
-    #         Xt = scaler.transform(Xt)
+    if scale:
+        scaler = MinMaxScaler()
+        X = scaler.fit_transform(X)
+        if Xt is not None:
+            Xt = scaler.transform(Xt)
 
-    # if bias:
-    #     X  = add_bias(X)        
-    #     if Xt is not None:
-    #         Xt = add_bias(Xt)
+    if bias:
+        X  = add_bias(X)        
+        if Xt is not None:
+            Xt = add_bias(Xt)
 
-    # if normalize:
-    #     X  = normalize_l2( X )
-    #     if Xt is not None:
-    #         Xt = normalize_l2( Xt )
+    if normalize:
+        X  = normalize_l2( X )
+        if Xt is not None:
+            Xt = normalize_l2( Xt )
 
     if Xt is not None:
         return X.astype(np.float32), Y.astype(np.int32),\

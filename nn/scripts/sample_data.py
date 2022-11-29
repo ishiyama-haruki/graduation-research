@@ -1,83 +1,168 @@
+# config : utf-8
+
+from __future__ import print_function, absolute_import, division, unicode_literals
+import sys, os
 import torch
-from torchvision import datasets, transforms
-from sklearn.datasets import fetch_covtype
-import matplotlib.pyplot as plt
+from . import binarize_libsvm_data 
+from . import data_loader
+if sys.version_info[0] == 2:
+    import cPickle
+else:
+    import _pickle as cPickle
 
-# 変換方法の指定
-transform = transforms.Compose([
-    transforms.ToTensor()
-    ])
+def save( train_path, train_file, test_path=None, test_file=None ):
+    if not os.path.exists( './data' ):
+        os.mkdir( './data' )
+    test_f = True if test_path is not None and test_file is not None else False
+    bz2_f = True if os.path.splitext(train_path)[1] == '.bz2' else False
 
-n_batch = 100
+    
+    if not os.path.exists( train_path ):
+        os.system( 'wget %s' % train_path )
+    if test_f:
+        if not os.path.exists( test_path ):
+            os.system( 'wget %s' % test_path )
+        
+    X_, Y_, xdic, ydic = binarize_libsvm_data.preprocess( train_path, bz2_f=bz2_f )
+    if test_f:
+        Xt_, Yt_, xdic, ydic = binarize_libsvm_data.preprocess( test_path, xdic, ydic, bz2_f=bz2_f )
+    else:
+        Xt_, Yt_ = None, None
 
-def get_mnist_dataloader():
+    X, Y = binarize_libsvm_data.binarize( X_, Y_, xdic, ydic )
+    fout = open( train_file, 'wb' )
+    cPickle.dump( [X,Y], fout )
+    fout.close()
 
-    # 学習用
-    train_dataset = datasets.MNIST(
-        '/workspace/nn/data',               # データの保存先
-        train = True,           # 学習用データを取得する
-        download = True,        # データが無い時にダウンロードする
-        transform = transform   # テンソルへの変換など
-        )
+    if test_f:
+        Xt, Yt = binarize_libsvm_data.binarize( Xt_, Yt_, xdic, ydic )
+        fout = open( test_file, 'wb' )
+        cPickle.dump( [Xt,Yt], fout )
+        fout.close()
 
-    # 評価用
-    test_dataset = datasets.MNIST(
-        '/workspace/nn/data', 
-        train = False,
-        transform = transform
-        )
+n_batch = 128
 
-    # データローダー
+def get_data(X, Y, Xt, Yt):
+    train_dataset = torch.utils.data.TensorDataset(X, Y)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size = n_batch,
         shuffle = True)
 
+    test_dataset = torch.utils.data.TensorDataset(Xt, Yt)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
         batch_size = n_batch,
         shuffle = True)
 
-    return train_dataset, test_dataset, train_dataloader, test_dataloader
+    return train_dataset, train_dataloader, test_dataset, test_dataloader
+
+normalize   = False
+bias        = False
+
+def get_ijcnn1():
+    train_file = './data/ijcnn1.data'
+    test_file = './data/ijcnn1.t.data'
+    split       = False
+    standardize = True
+    scale       = False
+
+    if not os.path.exists( train_file ) or not os.path.exists( test_file ):
+        train_path = './data_raw/ijcnn1.bz2'
+        test_path = './data_raw/ijcnn1.t.bz2' 
+        save( train_path, train_file, test_path, test_file )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
+        
+def get_mnist():
+    train_file = './data/mnist.data'
+    test_file = './data/mnist.t.data'
+    split       = False
+    standardize = False
+    scale       = True
+
+    if not os.path.exists( train_file ) or not os.path.exists( test_file ):
+        train_path = './data_raw/mnist.scale.bz2'
+        test_path = './data_raw/mnist.scale.t.bz2' 
+        save( train_path, train_file, test_path, test_file )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
+
+def get_usps():
+    train_file = './data/usps.data'
+    test_file = './data/usps.t.data'
+    split       = False
+    standardize = False
+    scale       = True
+
+    if not os.path.exists( train_file ) or not os.path.exists( test_file ):
+        train_path = './data_raw/usps.bz2'
+        test_path = './data_raw/usps.t.bz2' 
+        save( train_path, train_file, test_path, test_file )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
 
 
-def get_usps_dataloader():
+def get_covtype():
+    train_file = './data/covtype.data'
+    test_file = None
+    split       = True
+    standardize = True
+    scale       = False
 
-    # 学習用
-    train_dataset = datasets.USPS(
-        '/workspace/nn/data',               # データの保存先
-        train = True,           # 学習用データを取得する
-        download = True,        # データが無い時にダウンロードする
-        transform = transform   # テンソルへの変換など
-        )
+    if not os.path.exists( train_file ):
+        train_path = './data_raw/covtype.scale01.bz2'
+        save( train_path, train_file, None, None )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
 
-    # 評価用
-    test_dataset = datasets.USPS(
-        '/workspace/nn/data', 
-        train = False,
-        download = True,   
-        transform = transform
-        )
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
 
-    # データローダー
-    train_dataloader = torch.utils.data.DataLoader(
-        train_dataset,
-        batch_size = n_batch,
-        shuffle = True)
+def get_letter():
+    train_file = './data/letter.data'
+    test_file = './data/letter.t.data'
+    split       = False
+    standardize = False
+    scale       = True
 
-    test_dataloader = torch.utils.data.DataLoader(
-        test_dataset,
-        batch_size = n_batch,
-        shuffle = True)
+    if not os.path.exists( train_file ) or not os.path.exists( test_file ):
+        train_path = './data_raw/letter.scale'
+        test_path = './data_raw/letter.scale.t' 
+        save( train_path, train_file, test_path, test_file )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+    return X, Y, Xt, Yt
 
-    return train_dataset, test_dataset, train_dataloader, test_dataloader
+def get_susy():
+    train_file = './data/susy.data'
+    test_file = None
+    split       = True
+    standardize = True
+    scale       = False
+
+    if not os.path.exists( train_file ):
+        train_path = './data_raw/SUSY.xz'
+        save( train_path, train_file, None, None )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
 
 
-def get_covtype_dataloader():
-    print('get_covtype_dataloader')
-    forest = fetch_covtype()
-    Data= forest['data']
-    label = forest['target']
-    print(Data.shape)
-    print('---------------------')
-    print(len(label))
