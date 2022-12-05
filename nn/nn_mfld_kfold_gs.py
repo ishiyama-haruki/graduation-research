@@ -30,12 +30,46 @@ elif dataset == 'ijcnn1':
     X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_ijcnn1()
     image_size = 22
     output_size = 2
+elif dataset == 'letter':
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_letter()
+    image_size = 16
+    output_size = 26
+elif dataset == 'cifar10':
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_cifar10()
+    image_size = 3072
+    output_size = 10
+elif dataset == 'dna':
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_dna()
+    image_size = 180
+    output_size = 3
+elif dataset == 'aloi':
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_aloi()
+    image_size = 128
+    output_size = 1000
+elif dataset == 'sector':
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_sector()
+    image_size = 55197
+    output_size = 105
+elif dataset == 'shuttle':
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_shuttle()
+    image_size = 9
+    output_size = 7
+elif dataset == 'susy':
+    X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
+    image_size = 1
+    output_size = 2
+
+
 
 n_batch = 128
 M = [1000, 3000, 5000]
 lr = [1, 1e-1, 1e-2]
 lda1 = [1e-3, 1e-5, 1e-7] # λ'
 lda2 = [1e-3, 1e-5, 1e-7]  # λ
+# M = [1000, 3000, 5000, 7000, 9000]
+# lr = [1, 1e-1, 1e-2, 1e-3]
+# lda1 = [1e-1, 1e-3, 1e-5, 1e-7] # λ'
+# lda2 = [1e-1, 1e-3, 1e-5, 1e-7]  # λ
 params = list(itertools.product(M, lr, lda1, lda2))
 
 print('nn_mfld_kfold_gs.py start!')
@@ -60,8 +94,8 @@ class Net(nn.Module):
         # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
         x = self.fc1(x)
         x = torch.sigmoid(x)
-        x = self.fc2(x)
-        return F.log_softmax(x, dim=1)/M
+        x = self.fc2(x)/M
+        return F.log_softmax(x, dim=1)
 
 #----------------------------------------------------------
 # 学習

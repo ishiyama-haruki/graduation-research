@@ -40,6 +40,37 @@ def save( train_path, train_file, test_path=None, test_file=None ):
         cPickle.dump( [Xt,Yt], fout )
         fout.close()
 
+def save_from_url( train_url, train_file, test_url=None, test_file=None ):
+    if not os.path.exists( './data' ):
+        os.mkdir( './data' )
+    test_f = True if test_url is not None and test_file is not None else False
+    bz2_f = True if os.path.splitext(train_url)[1] == '.bz2' else False
+
+    train_raw = os.path.basename(train_url)
+    if not os.path.exists( train_raw ):
+        os.system( 'wget %s' % train_url )
+    if test_f:
+        test_raw = os.path.basename(test_url)
+        if not os.path.exists( test_raw ):
+            os.system( 'wget %s' % test_url )
+        
+    X_, Y_, xdic, ydic = binarize_libsvm_data.preprocess( train_raw, bz2_f=bz2_f )
+    if test_f:
+        Xt_, Yt_, xdic, ydic = binarize_libsvm_data.preprocess( test_raw, xdic, ydic, bz2_f=bz2_f )
+    else:
+        Xt_, Yt_ = None, None
+
+    X, Y = binarize_libsvm_data.binarize( X_, Y_, xdic, ydic )
+    fout = open( train_file, 'wb' )
+    cPickle.dump( [X,Y], fout )
+    fout.close()
+
+    if test_f:
+        Xt, Yt = binarize_libsvm_data.binarize( Xt_, Yt_, xdic, ydic )
+        fout = open( test_file, 'wb' )
+        cPickle.dump( [Xt,Yt], fout )
+        fout.close()
+
 n_batch = 128
 
 def get_data(X, Y, Xt, Yt):
@@ -146,7 +177,99 @@ def get_letter():
         
     X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
                                      standardize, scale, normalize, bias )
-    return X, Y, Xt, Yt
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
+
+def get_cifar10():
+    train_file = './data/cifar10.data'
+    test_file = './data/cifar10.t.data'
+    split       = False
+    standardize = False
+    scale       = True
+
+    if not os.path.exists( train_file ) or not os.path.exists( test_file ):
+        train_path = './data_raw/cifar10.bz2'
+        test_path = './data_raw/cifar10.t.bz2' 
+        save( train_path, train_file, test_path, test_file )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
+
+def get_dna():
+    train_file = './data/dna.data'
+    test_file = './data/dna.t.data'
+    split       = False
+    standardize = False
+    scale       = True
+
+    if not os.path.exists( train_file ) or not os.path.exists( test_file ):
+        train_path = './data_raw/dna.scale'
+        test_path = './data_raw/dna.scale.t' 
+        save( train_path, train_file, test_path, test_file )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
+
+def get_aloi():
+    train_file = './data/aloi.data'
+    test_file = None
+    split       = True
+    standardize = True
+    scale       = False
+
+    if not os.path.exists( train_file ):
+        train_path = './data_raw/aloi.scale.bz2'
+        save( train_path, train_file, None, None )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
+
+def get_sector():
+    train_file = './data/sector.data'
+    test_file = './data/sector.t.data'
+    split       = False
+    standardize = False
+    scale       = True
+
+    if not os.path.exists( train_file ) or not os.path.exists( test_file ):
+        train_path = './data_raw/sector.scale.bz2'
+        test_path = './data_raw/sector.t.scale.bz2' 
+        save( train_path, train_file, test_path, test_file )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
+
+def get_shuttle():
+    train_file = './data/shuttle.data'
+    test_file = './data/shuttle.t.data'
+    split       = False
+    standardize = False
+    scale       = True
+
+    if not os.path.exists( train_file ) or not os.path.exists( test_file ):
+        train_path = './data_raw/shuttle.scale'
+        test_path = './data_raw/shuttle.scale.t' 
+        save( train_path, train_file, test_path, test_file )
+        
+    X, Y, Xt, Yt = data_loader.load( train_file, test_file, split, 
+                                     standardize, scale, normalize, bias )
+
+    train_dataset, train_dataloader, test_dataset, test_dataloader = get_data(torch.from_numpy(X), torch.from_numpy(Y), torch.from_numpy(Xt), torch.from_numpy(Yt))
+    return X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader
+
 
 def get_susy():
     train_file = './data/susy.data'
