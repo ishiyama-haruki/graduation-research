@@ -16,7 +16,7 @@ n_epochs = int(sys.argv[2])
 
 if dataset == 'mnist':
     X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_mnist()
-    image_size = 719  #前処理の影響？で28x28ではない
+    image_size = 719  
     output_size = 10
 elif dataset == 'usps':
     X, Y, Xt, Yt, learning_dataset, learning_dataloader, test_dataset, test_dataloader = sample_data.get_usps()
@@ -66,10 +66,6 @@ M = [1000, 3000, 5000]
 lr = [1, 1e-1, 1e-2]
 lda1 = [1e-3, 1e-5, 1e-7] # λ'
 lda2 = [1e-3, 1e-5, 1e-7]  # λ
-# M = [1000, 3000, 5000, 7000, 9000]
-# lr = [1, 1e-1, 1e-2, 1e-3]
-# lda1 = [1e-1, 1e-3, 1e-5, 1e-7] # λ'
-# lda2 = [1e-1, 1e-3, 1e-5, 1e-7]  # λ
 params = list(itertools.product(M, lr, lda1, lda2))
 
 print('nn_mfld_kfold_gs.py start!')
@@ -135,7 +131,7 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
         # 重みの更新
         for p in model.parameters():
             noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-            p.data = (1 - 2 * lr*M * lda1) * p.data - lr*M * p.grad + np.sqrt(2*lr*M*lda2) * noise
+            p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
 
     return loss_sum.item(), correct/data_num
 
@@ -194,7 +190,7 @@ for i, param in enumerate(params):
     criterion = nn.CrossEntropyLoss()
 
     # クロスバリデーション
-    kf = KFold(n_splits=3, shuffle=True)
+    kf = KFold(n_splits=5, shuffle=True)
     val_acc_sum = 0
     for train_index, valid_index in kf.split(X):
         train_dataset = Subset(learning_dataset, train_index)
@@ -204,7 +200,6 @@ for i, param in enumerate(params):
 
         for epoch in range(n_epochs):
             train_loss, train_acc = train(train_dataset, train_dataloader, M, lr, lda1, lda2)
-            # print('epoch: {} train_loss: {} train_acc: {}'.format(epoch, train_loss, train_acc))
         val_loss, val_acc = test(valid_dataset, valid_dataloader)
         val_acc_sum += val_acc
 

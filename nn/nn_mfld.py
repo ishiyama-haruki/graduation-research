@@ -38,13 +38,13 @@ if dataset == 'mnist':
     lr = 0.01
     lda1 = 1e-5 # λ'
     lda2 = 1e-5  # λ
-    image_size = 719  #前処理の影響？で28x28ではない
+    image_size = 719  
     output_size = 10
 elif dataset == 'usps':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 3000
+    lr = 1e-2
+    lda1 = 1e-5 # λ'
+    lda2 = 1e-5  # λ
     image_size = 16*16
     output_size = 10
 elif dataset == 'covtype':
@@ -55,24 +55,24 @@ elif dataset == 'covtype':
     image_size = 54
     output_size = 7
 elif dataset == 'ijcnn1':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 5000
+    lr = 0.1
+    lda1 = 1e-5 # λ'
+    lda2 = 1e-3  # λ
     image_size = 22
     output_size = 2
 elif dataset == 'letter':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 3000
+    lr = 1e-2
+    lda1 = 1e-5 # λ'
+    lda2 = 1e-5  # λ
     image_size = 16
     output_size = 26
 elif dataset == 'cifar10':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 5000
+    lr = 0.1
+    lda1 = 1e-3 # λ'
+    lda2 = 1e-5  # λ
     image_size = 3072
     output_size = 10
 elif dataset == 'dna':
@@ -83,10 +83,10 @@ elif dataset == 'dna':
     image_size = 180
     output_size = 3
 elif dataset == 'aloi':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 1000
+    lr = 0.1
+    lda1 = 1e-5 # λ'
+    lda2 = 1e-5  # λ
     image_size = 128
     output_size = 1000
 elif dataset == 'sector':
@@ -97,10 +97,10 @@ elif dataset == 'sector':
     image_size = 55197
     output_size = 105
 elif dataset == 'shuttle':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 1000
+    lr = 0.1
+    lda1 = 1e-3 # λ'
+    lda2 = 1e-5  # λ
     image_size = 9
     output_size = 7
 elif dataset == 'susy':
@@ -182,7 +182,7 @@ def train(epoch):
         # 重みの更新
         for p in model.parameters():
             noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-            p.data = (1 - 2 * lr*M * lda1) * p.data - lr*M * p.grad + np.sqrt(2*lr*M*lda2) * noise
+            p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
     
     return loss_sum.item(), correct/data_num
 
