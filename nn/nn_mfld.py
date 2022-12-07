@@ -76,9 +76,9 @@ elif dataset == 'cifar10':
     image_size = 3072
     output_size = 10
 elif dataset == 'dna':
-    M = 1000
-    lr = 0.01
-    lda1 = 1e-7 # λ'
+    M = 3000
+    lr = 0.1
+    lda1 = 1e-3 # λ'
     lda2 =  1e-3 # λ
     image_size = 180
     output_size = 3
@@ -133,7 +133,8 @@ class Net(nn.Module):
         # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
         x = self.fc1(x)
         x = torch.sigmoid(x)
-        x = self.fc2(x)/M
+        x = self.fc2(x)
+        x = x / M
         return F.log_softmax(x, dim=1)
 
 
@@ -225,7 +226,7 @@ def test(epoch):
 for epoch in range(n_epochs):
     train_loss, train_acc = train(epoch)
     print("epoch", epoch+1, " train_loss:{:.5f}".format(train_loss), "train_acc:{:.2f}".format(train_acc))
-
+    
     with open(train_logname, 'a') as train_logfile:
         train_logwriter = csv.writer(train_logfile, delimiter=',')
         train_logwriter.writerow([epoch, "{:.5f}".format(float(train_loss)), "{:.3f}".format(float(train_acc))])
@@ -237,7 +238,6 @@ for epoch in range(n_epochs):
         with open(test_logname, 'a') as test_logfile:
             test_logwriter = csv.writer(test_logfile, delimiter=',')
             test_logwriter.writerow([epoch, "{:.5f}".format(float(test_loss)), "{:.3f}".format(float(test_acc))])
-
 
 plot_from_csv.plot(dataset, n_epochs)
 

@@ -90,7 +90,8 @@ class Net(nn.Module):
         # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
         x = self.fc1(x)
         x = torch.sigmoid(x)
-        x = self.fc2(x)/M
+        x = self.fc2(x)
+        x = x / M
         return F.log_softmax(x, dim=1)
 
 #----------------------------------------------------------
