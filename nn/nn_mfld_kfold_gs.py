@@ -81,7 +81,6 @@ class Net(nn.Module):
     def __init__(self, input_size, output_size):
         super(Net, self).__init__()
 
-        print('M: {}'.format(M))
         # 各クラスのインスタンス（入出力サイズなどの設定）
         self.fc1 = nn.Linear(input_size, M)
         self.fc2 = nn.Linear(M, output_size)
@@ -92,7 +91,7 @@ class Net(nn.Module):
         x = torch.sigmoid(x)
         x = self.fc2(x)
         x = x / M
-        return F.log_softmax(x, dim=1)
+        return x
 
 #----------------------------------------------------------
 # 学習
@@ -104,13 +103,14 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
     data_num = 0
 
     for inputs, labels in train_dataloader:
+        # 勾配の初期化
+        model.zero_grad()
         
         # GPUが使えるならGPUにデータを送る
         inputs = inputs.cuda()
         labels = labels.cuda()
 
         # ニューラルネットワークの処理を行う
-        # inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び替える
         outputs = model.forward(inputs)
 
         # 損失計算
@@ -153,7 +153,6 @@ def test(dataset, dataloader):
             labels = labels.cuda()
 
             # ニューラルネットワークの処理を行う
-            # inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び変える
             outputs = model(inputs)
 
             # 損失(出力とラベルとの誤差)の計算
@@ -217,15 +216,15 @@ for i, param in enumerate(params):
     if (val_acc_mean > max_val_acc):
         max_val_acc = val_acc_mean
         best_param = param
-        torch.save(model, '/workspace/nn/results/{}/{}/model_weight.pth'.format(dataset, n_epochs))
+        # torch.save(model, '/workspace/nn/results/{}/{}/model_weight.pth'.format(dataset, n_epochs))
 
 print('best param')
 print(best_param)
 print('max_val_acc = {}'.format(max_val_acc))
 
 
-# ベストスコアを出したモデルでテストスコアを出す
-model = torch.load('/workspace/nn/results/{}/{}/model_weight.pth'.format(dataset, n_epochs))
-criterion = nn.CrossEntropyLoss()
-test_loss, test_acc = test(test_dataset, test_dataloader)
-print('test_acc = {}'.format(test_acc))
+# # ベストスコアを出したモデルでテストスコアを出す
+# model = torch.load('/workspace/nn/results/{}/{}/model_weight.pth'.format(dataset, n_epochs))
+# criterion = nn.CrossEntropyLoss()
+# test_loss, test_acc = test(test_dataset, test_dataloader)
+# print('test_acc = {}'.format(test_acc))

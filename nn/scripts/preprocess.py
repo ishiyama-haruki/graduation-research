@@ -5,6 +5,7 @@ import numpy as np
 import theano
 
 def add_bias( X, bias=1. ):
+    print('add bias')
     n = X.shape[0]
     ones = bias * np.ones((n,1), dtype=theano.config.floatX )
     return np.concatenate( (X,ones), axis=1 )

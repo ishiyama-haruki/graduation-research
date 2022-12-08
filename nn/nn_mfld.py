@@ -34,17 +34,17 @@ elif dataset == 'susy':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
 if dataset == 'mnist':
-    M = 5000
-    lr = 0.01
-    lda1 = 1e-5 # λ'
-    lda2 = 1e-5  # λ
+    M = 0
+    lr = 0
+    lda1 = 0 # λ'
+    lda2 = 0  # λ
     image_size = 719  
     output_size = 10
 elif dataset == 'usps':
-    M = 3000
-    lr = 1e-2
-    lda1 = 1e-5 # λ'
-    lda2 = 1e-5  # λ
+    M = 0
+    lr = 0
+    lda1 = 0 # λ'
+    lda2 = 0  # λ
     image_size = 16*16
     output_size = 10
 elif dataset == 'covtype':
@@ -55,38 +55,38 @@ elif dataset == 'covtype':
     image_size = 54
     output_size = 7
 elif dataset == 'ijcnn1':
-    M = 5000
-    lr = 0.1
-    lda1 = 1e-5 # λ'
-    lda2 = 1e-3  # λ
+    M = 0
+    lr = 0
+    lda1 = 0 # λ'
+    lda2 = 0  # λ
     image_size = 22
     output_size = 2
 elif dataset == 'letter':
-    M = 3000
-    lr = 1e-2
-    lda1 = 1e-5 # λ'
-    lda2 = 1e-5  # λ
+    M = 0
+    lr = 0
+    lda1 = 0 # λ'
+    lda2 = 0  # λ
     image_size = 16
     output_size = 26
 elif dataset == 'cifar10':
-    M = 5000
-    lr = 0.1
-    lda1 = 1e-3 # λ'
-    lda2 = 1e-5  # λ
+    M = 0
+    lr = 0
+    lda1 = 0 # λ'
+    lda2 = 0  # λ
     image_size = 3072
     output_size = 10
 elif dataset == 'dna':
     M = 3000
     lr = 0.1
-    lda1 = 1e-3 # λ'
-    lda2 =  1e-3 # λ
+    lda1 = 0.001 # λ'
+    lda2 =  0.001 # λ
     image_size = 180
     output_size = 3
 elif dataset == 'aloi':
-    M = 1000
-    lr = 0.1
-    lda1 = 1e-5 # λ'
-    lda2 = 1e-5  # λ
+    M = 0
+    lr = 0
+    lda1 = 0 # λ'
+    lda2 = 0  # λ
     image_size = 128
     output_size = 1000
 elif dataset == 'sector':
@@ -97,10 +97,10 @@ elif dataset == 'sector':
     image_size = 55197
     output_size = 105
 elif dataset == 'shuttle':
-    M = 1000
-    lr = 0.1
-    lda1 = 1e-3 # λ'
-    lda2 = 1e-5  # λ
+    M = 0
+    lr = 0
+    lda1 = 0 # λ'
+    lda2 = 0  # λ
     image_size = 9
     output_size = 7
 elif dataset == 'susy':
@@ -135,7 +135,7 @@ class Net(nn.Module):
         x = torch.sigmoid(x)
         x = self.fc2(x)
         x = x / M
-        return F.log_softmax(x, dim=1)
+        return x
 
 
 #----------------------------------------------------------
@@ -156,12 +156,14 @@ def train(epoch):
     data_num = 0
 
     for inputs, labels in train_dataloader:
+        # 勾配の初期化
+        model.zero_grad()
+        
         # GPUが使えるならGPUにデータを送る
         inputs = inputs.cuda()
         labels = labels.cuda()
 
         # ニューラルネットワークの処理を行う
-        # inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び替える
         outputs = model.forward(inputs)
 
         # 損失計算
@@ -204,7 +206,6 @@ def test(epoch):
             labels = labels.cuda()
 
             # ニューラルネットワークの処理を行う
-            # inputs = inputs.view(-1, image_size) # 画像データ部分を一次元へ並び変える
             outputs = model(inputs)
 
             # 損失(出力とラベルとの誤差)の計算
