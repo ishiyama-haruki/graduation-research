@@ -34,17 +34,17 @@ elif dataset == 'susy':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
 if dataset == 'mnist':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 5000
+    lr = 1
+    lda1 = 1e-7 # λ'
+    lda2 = 1e-7  # λ
     image_size = 719  
     output_size = 10
 elif dataset == 'usps':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 3000
+    lr = 1
+    lda1 = 1e-7 # λ'
+    lda2 = 1e-5  # λ
     image_size = 16*16
     output_size = 10
 elif dataset == 'covtype':
@@ -62,24 +62,24 @@ elif dataset == 'ijcnn1':
     image_size = 22
     output_size = 2
 elif dataset == 'letter':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 3000
+    lr = 1
+    lda1 = 1e-5 # λ'  l2正則
+    lda2 = 1e-7  # λ  mfld
     image_size = 16
     output_size = 26
 elif dataset == 'cifar10':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 3000
+    lr = 0.1
+    lda1 = 1e-7 # λ'
+    lda2 = 1e-3  # λ
     image_size = 3072
     output_size = 10
 elif dataset == 'dna':
     M = 3000
-    lr = 0.1
-    lda1 = 0.001 # λ'
-    lda2 =  0.001 # λ
+    lr = 1
+    lda1 = 1e-7 # λ'
+    lda2 =  1e-5 # λ
     image_size = 180
     output_size = 3
 elif dataset == 'aloi':
@@ -97,10 +97,10 @@ elif dataset == 'sector':
     image_size = 55197
     output_size = 105
 elif dataset == 'shuttle':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'
-    lda2 = 0  # λ
+    M = 3000
+    lr = 1
+    lda1 = 1e-7 # λ'
+    lda2 = 1e-7  # λ
     image_size = 9
     output_size = 7
 elif dataset == 'susy':
@@ -127,12 +127,13 @@ class Net(nn.Module):
 
         # 各クラスのインスタンス（入出力サイズなどの設定）
         self.fc1 = nn.Linear(input_size, M)
+        self.relu = nn.ReLU()
         self.fc2 = nn.Linear(M, output_size)
 
     def forward(self, x):
         # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
         x = self.fc1(x)
-        x = torch.sigmoid(x)
+        x = self.relu(x)
         x = self.fc2(x)
         x = x / M
         return x
@@ -158,7 +159,7 @@ def train(epoch):
     for inputs, labels in train_dataloader:
         # 勾配の初期化
         model.zero_grad()
-        
+
         # GPUが使えるならGPUにデータを送る
         inputs = inputs.cuda()
         labels = labels.cuda()
@@ -187,7 +188,7 @@ def train(epoch):
             noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
             p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
     
-    return loss_sum.item(), correct/data_num
+    return loss_sum.item()/data_num, correct/data_num
 
 
 #----------------------------------------------------------
@@ -220,7 +221,7 @@ def test(epoch):
             #データ数をカウント
             data_num += len(inputs)
 
-    return loss_sum.item(), correct/data_num
+    return loss_sum.item()/data_num, correct/data_num
 
 
 

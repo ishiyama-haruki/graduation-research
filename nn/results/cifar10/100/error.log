@@ -1,0 +1,5 @@
+nohup: ignoring input
+/opt/conda/lib/python3.8/site-packages/theano/configdefaults.py:560: UserWarning: DeprecationWarning: there is no c++ compiler.This is deprecated and with Theano 0.11 a c++ compiler will be mandatory
+  warnings.warn("DeprecationWarning: there is no c++ compiler."
+WARNING (theano.configdefaults): g++ not detected ! Theano will be unable to execute optimized C-implementations (for both CPU and GPU) and will default to Python implementations. Performance will be severely degraded. To remove this warning, set Theano flags cxx to an empty string.
+WARNING (theano.tensor.blas): Using NumPy C-API based implementation for BLAS functions.
