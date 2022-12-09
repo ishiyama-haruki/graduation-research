@@ -9,6 +9,7 @@ import sys
 
 dataset = sys.argv[1]
 n_epochs = int(sys.argv[2])
+activation_function = sys.argv[3]
 
 if dataset == 'mnist':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_mnist()
@@ -112,8 +113,8 @@ elif dataset == 'susy':
     output_size = 2
 
 
-train_logname = '/workspace/nn/results/{}/{}/train_log.csv'.format(dataset, n_epochs)
-test_logname = '/workspace/nn/results/{}/{}/test_log.csv'.format(dataset, n_epochs)
+train_logname = '/workspace/nn/results/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
+test_logname = '/workspace/nn/results/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
 
 # GPU(CUDA)が使えるかどうか？
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -127,13 +128,21 @@ class Net(nn.Module):
 
         # 各クラスのインスタンス（入出力サイズなどの設定）
         self.fc1 = nn.Linear(input_size, M)
-        self.relu = nn.ReLU()
+
+        if activation_function == 'relu':
+            self.relu = nn.ReLU()
+        
         self.fc2 = nn.Linear(M, output_size)
 
     def forward(self, x):
         # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
         x = self.fc1(x)
-        x = self.relu(x)
+
+        if activation_function == 'relu':
+            x = self.relu(x)
+        elif activation_function == 'sigmoid':
+            x = torch.sigmoid(x)
+
         x = self.fc2(x)
         x = x / M
         return x
@@ -241,5 +250,5 @@ for epoch in range(n_epochs):
             test_logwriter = csv.writer(test_logfile, delimiter=',')
             test_logwriter.writerow([epoch, "{:.5f}".format(float(test_loss)), "{:.3f}".format(float(test_acc))])
 
-plot_from_csv.plot(dataset, n_epochs)
+plot_from_csv.plot(dataset, activation_function, n_epochs)
 

@@ -15,13 +15,6 @@ def save( train_path, train_file, test_path=None, test_file=None ):
         os.mkdir( './data' )
     test_f = True if test_path is not None and test_file is not None else False
     bz2_f = True if os.path.splitext(train_path)[1] == '.bz2' else False
-
-    
-    if not os.path.exists( train_path ):
-        os.system( 'wget %s' % train_path )
-    if test_f:
-        if not os.path.exists( test_path ):
-            os.system( 'wget %s' % test_path )
         
     X_, Y_, xdic, ydic = binarize_libsvm_data.preprocess( train_path, bz2_f=bz2_f )
     if test_f:

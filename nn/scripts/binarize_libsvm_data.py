@@ -3,7 +3,7 @@
 from __future__ import print_function, absolute_import, division, unicode_literals
 import sys, bz2, lzma
 import numpy as np
-import theano
+# import theano
 
 def preprocess( datafile_name, xdic=None, ydic=None, bz2_f=True ):
     X_org = []
@@ -84,6 +84,6 @@ def binarize( X_org, Y_org, xdic, ydic ):
         X.append(x)
 
     Y = np.asarray( Y, dtype=u'int32' )
-    X = np.asarray( X, dtype=theano.config.floatX )
+    X = np.asarray( X, dtype=u'float32' )
 
     return X, Y

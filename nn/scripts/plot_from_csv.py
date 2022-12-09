@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
-def plot(dataset, n_epochs):
+def plot(dataset, activation_function, n_epochs):
 
-    train_logname = '/workspace/nn/results/{}/{}/train_log.csv'.format(dataset, n_epochs)
-    test_logname = '/workspace/nn/results/{}/{}/test_log.csv'.format(dataset, n_epochs)
+    train_logname = '/workspace/nn/results/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
+    test_logname = '/workspace/nn/results/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
 
     #訓練データ
     epoch_list = []
@@ -34,4 +34,4 @@ def plot(dataset, n_epochs):
     plt.plot(epoch_list, accuracy_list, label='test', color='r', linestyle='dashed')
 
     plt.legend()
-    plt.savefig('/workspace/nn/results/{}/{}/accuracy.png'.format(dataset, n_epochs))
+    plt.savefig('/workspace/nn/results/{}/{}/{}/accuracy.png'.format(dataset, activation_function, n_epochs))

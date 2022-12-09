@@ -12,6 +12,7 @@ import itertools
 
 dataset = sys.argv[1]
 n_epochs = int(sys.argv[2])
+activation_function = sys.argv[3]
 
 
 if dataset == 'mnist':
@@ -83,12 +84,21 @@ class Net(nn.Module):
 
         # 各クラスのインスタンス（入出力サイズなどの設定）
         self.fc1 = nn.Linear(input_size, M)
+
+        if activation_function == 'relu':
+            self.relu = nn.ReLU()
+            
         self.fc2 = nn.Linear(M, output_size)
 
     def forward(self, x):
         # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
         x = self.fc1(x)
-        x = torch.sigmoid(x)
+
+        if activation_function == 'relu':
+            x = self.relu(x)
+        elif activation_function == 'sigmoid':
+            x = torch.sigmoid(x)
+
         x = self.fc2(x)
         x = x / M
         return x
