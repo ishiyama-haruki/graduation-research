@@ -134,8 +134,7 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
             noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
             p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
 
-    return loss_sum.item(), correct/data_num
-
+    return loss_sum.item()/data_num, correct/data_num
 
 #----------------------------------------------------------
 # 評価
@@ -167,7 +166,7 @@ def test(dataset, dataloader):
             #データ数をカウント
             data_num += len(inputs)
 
-    return loss_sum.item(), correct/data_num
+    return loss_sum.item()/data_num, correct/data_num
 
 
 max_val_acc = 0
