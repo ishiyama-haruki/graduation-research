@@ -61,10 +61,13 @@ elif dataset == 'susy':
     output_size = 2
 
 
-
 n_batch = 128
-M = [1000, 3000, 5000]
-lr = [1, 1e-1, 1e-2]
+# M = [1000, 3000, 5000, 7000]
+# lr = [2, 1, 1e-1, 1e-2]
+# lda1 = [1e-3, 1e-5, 1e-7] # λ'
+# lda2 = [1e-3, 1e-5, 1e-7]  # λ
+M = [1000, 3000, 5000, 7000]
+lr = [0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2]
 lda1 = [1e-3, 1e-5, 1e-7] # λ'
 lda2 = [1e-3, 1e-5, 1e-7]  # λ
 params = list(itertools.product(M, lr, lda1, lda2))
@@ -179,8 +182,11 @@ def test(dataset, dataloader):
     return loss_sum.item()/data_num, correct/data_num
 
 
-max_val_acc = 0
-best_param = []
+best_params = {}
+max_val_accs = {}
+for i, lr_ele in enumerate(lr):
+    best_params[lr_ele] = []
+    max_val_accs[lr_ele] = 0
 # グリッドサーチ：全パラメータの組み合わせで実行
 for i, param in enumerate(params): 
     print('{}/{}'.format(i+1, len(params)))
@@ -222,14 +228,15 @@ for i, param in enumerate(params):
 
     sys.stdout.flush() # 明示的にflush
 
-    if (val_acc_mean > max_val_acc):
-        max_val_acc = val_acc_mean
-        best_param = param
+    if (val_acc_mean > max_val_accs[lr]):
+        max_val_accs[lr] = val_acc_mean
+        best_params[lr] = param
         # torch.save(model, '/workspace/nn/results/{}/{}/model_weight.pth'.format(dataset, n_epochs))
 
 print('best param')
-print(best_param)
-print('max_val_acc = {}'.format(max_val_acc))
+for lr, best_param in best_params.items():
+    print(best_param)
+    print('max_val_acc = {}'.format(max_val_accs[lr]))
 
 
 # # ベストスコアを出したモデルでテストスコアを出す

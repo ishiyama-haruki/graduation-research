@@ -35,59 +35,59 @@ elif dataset == 'susy':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
 if dataset == 'mnist':
-    M = 5000
+    M = 7000
     lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
     lda2 = 1e-7  # λ  mfld
     image_size = 719  
     output_size = 10
 elif dataset == 'usps':
-    M = 3000
+    M = 1000
     lr = 1
-    lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-5  # λ  mfld
+    lda1 = 1e-5 # λ'  l2正則化項
+    lda2 = 1e-7  # λ  mfld
     image_size = 16*16
     output_size = 10
 elif dataset == 'covtype':
     M = 0
-    lr = 0
-    lda1 = 0 # λ'  l2正則化項
-    lda2 = 0  # λ  mfld
+    lr = 1
+    lda1 = 1e-7 # λ'  l2正則化項
+    lda2 = 1e-5  # λ  mfld
     image_size = 54
     output_size = 7
 elif dataset == 'ijcnn1':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'  l2正則化項
-    lda2 = 0  # λ  mfld
+    M = 7000
+    lr = 2
+    lda1 = 1e-7 # λ'  l2正則化項
+    lda2 = 1e-7  # λ  mfld
     image_size = 22
     output_size = 2
 elif dataset == 'letter':
-    M = 3000
-    lr = 1
-    lda1 = 1e-5 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
-    image_size = 16
-    output_size = 26
-elif dataset == 'cifar10':
-    M = 3000
-    lr = 0.1
+    M = 5000
+    lr = 0.3
     lda1 = 1e-7 # λ'  l2正則化項
     lda2 = 1e-3  # λ  mfld
+    image_size = 16
+    output_size = 26
+elif dataset == 'cifar10': # 過学習気味？
+    M = 5000
+    lr = 0.1
+    lda1 = 1e-7 # λ'  l2正則化項
+    lda2 = 1e-7  # λ  mfld
     image_size = 3072
     output_size = 10
 elif dataset == 'dna':
-    M = 3000
+    M = 1000
     lr = 1
-    lda1 = 1e-7 # λ'  l2正則化項
+    lda1 = 1e-5 # λ'  l2正則化項
     lda2 =  1e-5 # λ  mfld
     image_size = 180
     output_size = 3
 elif dataset == 'aloi':
-    M = 0
-    lr = 0
-    lda1 = 0 # λ'  l2正則化項
-    lda2 = 0  # λ  mfld
+    M = 5000
+    lr = 1
+    lda1 = 1e-7 # λ'  l2正則化項
+    lda2 = 1e-7  # λ  mfld
     image_size = 128
     output_size = 1000
 elif dataset == 'sector':
@@ -101,7 +101,7 @@ elif dataset == 'shuttle':
     M = 3000
     lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
+    lda2 = 1e-3  # λ  mfld
     image_size = 9
     output_size = 7
 elif dataset == 'susy':
@@ -113,8 +113,8 @@ elif dataset == 'susy':
     output_size = 2
 
 
-train_logname = '/workspace/nn/results/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
-test_logname = '/workspace/nn/results/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
+train_logname = '/workspace/mfld/results/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
+test_logname = '/workspace/mfld/results/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
 
 # GPU(CUDA)が使えるかどうか？
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -128,10 +128,6 @@ class Net(nn.Module):
 
         # 各クラスのインスタンス（入出力サイズなどの設定）
         self.fc1 = nn.Linear(input_size, M)
-
-        if activation_function == 'relu':
-            self.relu = nn.ReLU()
-        
         self.fc2 = nn.Linear(M, output_size)
 
     def forward(self, x):
@@ -139,7 +135,7 @@ class Net(nn.Module):
         x = self.fc1(x)
 
         if activation_function == 'relu':
-            x = self.relu(x)
+            x = torch.relu(x)
         elif activation_function == 'sigmoid':
             x = torch.sigmoid(x)
 
@@ -151,6 +147,10 @@ class Net(nn.Module):
 #----------------------------------------------------------
 # ニューラルネットワークの生成
 model = Net(image_size, output_size).cuda()
+
+# # 重みの初期値
+torch.nn.init.kaiming_uniform_(model.fc1.weight)
+torch.nn.init.kaiming_uniform_(model.fc2.weight)
 
 #----------------------------------------------------------
 # 損失関数の設定
