@@ -113,8 +113,8 @@ elif dataset == 'susy':
     output_size = 2
 
 
-train_logname = '/workspace/mfld/results/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
-test_logname = '/workspace/mfld/results/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
+train_logname = '/workspace/nn/results/mfld/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
+test_logname = '/workspace/nn/results/mfld/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
 
 # GPU(CUDA)が使えるかどうか？
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
