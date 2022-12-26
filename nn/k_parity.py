@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -19,8 +20,8 @@ b_size = 50
 M = 2048
 eta = 1e-2
 T = 10000
-train_2nd = False
-bias_unit = True
+# train_2nd = False
+# bias_unit = True
 
 # regularization
 lda1 = 1e-3 # weight decay
@@ -30,12 +31,10 @@ class Net(nn.Module):
     def __init__(self, input_size, output_size):
         super(Net, self).__init__()
 
-        # 各クラスのインスタンス（入出力サイズなどの設定）
         self.fc1 = nn.Linear(input_size, M)
         self.fc2 = nn.Linear(M, output_size)
 
     def forward(self, x):
-        # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
         x = self.fc1(x)
         x = torch.relu(x)
         x = self.fc2(x)
@@ -46,29 +45,28 @@ class Net(nn.Module):
 model = Net(d+1, b_size).cuda()
 criterion = nn.MSELoss()
 
-
-
 skip = 10
 result = np.zeros([T//skip,3])
 
-# trainable parameters
-if bias_unit:
-    Ws = torch.normal(mean=0,std=(1/d)**0.5,size=(d+1,M),device=device,requires_grad=True)
-else: 
-    Ws = torch.normal(mean=0,std=(1/d)**0.5,size=(d,M),device=device,requires_grad=True)
-
-bs =  torch.cat([torch.ones(M//2, 1),-torch.ones(M//2,1)]).to(device)
-if train_2nd:
-    bs.requires_grad = True
 
 for t in tqdm(range(T)):
     X,Y = parity(k,d,b_size)
 
-    if bias_unit:
-        X = torch.cat([X,torch.ones(b_size,1).to(device)],dim=1)
+    loss = criterion(Y, model.forward(X))
 
-    if t % skip == 0:        
+    loss.backward()
 
-        result[t//skip,0] = loss_fn(Y,model.forward(X))
-        result[t//skip,1] = zero_one(Y,model.forward(X))
-        result[t//skip,2] = torch.norm(Ws[:k,:])**2 / torch.norm(Ws)**2
+    for p in model.parameters():
+        noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
+        p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
+
+    # if t % skip == 0:        
+
+    #     result[t//skip,0] = loss_fn(Y,model.forward(X))
+    #     result[t//skip,1] = zero_one(Y,model.forward(X))
+    #     result[t//skip,2] = torch.norm(Ws[:k,:])**2 / torch.norm(Ws)**2
+
+# plt.figure(0)
+# FONT_SIZE = 25.5
+# plt.rc('font',size=FONT_SIZE)
+# fig, (ax1) = plt.subplots(1,figsize=(10,8))
