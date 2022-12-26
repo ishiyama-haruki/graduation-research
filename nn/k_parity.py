@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -27,9 +28,9 @@ T = 10000
 lda1 = 1e-3 # weight decay
 lda2 = 1e-3 # entropy
 
-class Net(nn.Module):
+class Mfld(nn.Module):
     def __init__(self, input_size, output_size):
-        super(Net, self).__init__()
+        super(Mfld, self).__init__()
 
         self.fc1 = nn.Linear(input_size, M)
         self.fc2 = nn.Linear(M, output_size)
@@ -41,32 +42,58 @@ class Net(nn.Module):
         x = x / M
         return x
 
+class Ntk(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(Ntk, self).__init__()
 
-model = Net(d+1, b_size).cuda()
+        self.fc1 = nn.Linear(input_size, M)
+        self.fc2 = nn.Linear(M, output_size)
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = torch.relu(x)
+        x = self.fc2(x)
+        x = x / np.sqrt(M)
+        return x
+
+
+mfld = Mfld(d, b_size).cuda()
+ntk = Ntk(d, b_size).cuda()
 criterion = nn.MSELoss()
 
 skip = 10
-result = np.zeros([T//skip,3])
+result = np.zeros([T//skip,2])
 
-
-for t in tqdm(range(T)):
+for t in range(T):
     X,Y = parity(k,d,b_size)
 
-    loss = criterion(Y, model.forward(X))
+    mfld_loss = criterion(Y, mfld.forward(X))
+    ntk_loss = criterion(Y, ntk.forward(X))
 
-    loss.backward()
+    mfld_loss.backward()
+    ntk_loss.backward()
 
-    for p in model.parameters():
+    for p in mfld.parameters():
         noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
         p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
 
-    # if t % skip == 0:        
+    for p in ntk.parameters():
+        noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
+        p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
 
-    #     result[t//skip,0] = loss_fn(Y,model.forward(X))
-    #     result[t//skip,1] = zero_one(Y,model.forward(X))
-    #     result[t//skip,2] = torch.norm(Ws[:k,:])**2 / torch.norm(Ws)**2
+    if t % skip == 0:        
 
-# plt.figure(0)
-# FONT_SIZE = 25.5
-# plt.rc('font',size=FONT_SIZE)
-# fig, (ax1) = plt.subplots(1,figsize=(10,8))
+        result[t//skip,0] = mfld_loss
+        result[t//skip,1] = ntk_loss
+
+plt.figure(0)
+FONT_SIZE = 25.5
+plt.rc('font',size=FONT_SIZE)
+fig, (ax1) = plt.subplots(1,figsize=(10,8))
+
+plt.plot(np.arange(1,T+1,skip),result[:,0],linewidth=3,label='mfld loss')
+plt.plot(np.arange(1,T+1,skip),result[:,1],linewidth=3,label='ntk loss')
+
+plt.legend()
+plt.xlabel('GD steps')
+plt.savefig('/workspace/nn/results/k-parity-loss.png')
