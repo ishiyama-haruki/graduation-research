@@ -5,11 +5,11 @@ import csv
 def plot(dataset, activation_function, n_epochs, ntk=False):
 
     if ntk:
-        train_logname = '/workspace/results/ntk/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
-        test_logname = '/workspace/results/ntk/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
+        train_logname = '/workspace/nn/results/ntk/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
+        test_logname = '/workspace/nn/results/ntk/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
     else:
-        train_logname = '/workspace/results/mfld/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
-        test_logname = '/workspace/results/mfld/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
+        train_logname = '/workspace/nn/results/mfld/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
+        test_logname = '/workspace/nn/results/mfld/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
 
     #訓練データ
     epoch_list = []
@@ -40,6 +40,6 @@ def plot(dataset, activation_function, n_epochs, ntk=False):
     plt.legend()
 
     if ntk:
-        plt.savefig('/workspace/results/ntk/{}/{}/{}/accuracy.png'.format(dataset, activation_function, n_epochs))
+        plt.savefig('/workspace/nn/results/ntk/{}/{}/{}/accuracy.png'.format(dataset, activation_function, n_epochs))
     else:
-        plt.savefig('/workspace/results/mfld/{}/{}/{}/accuracy.png'.format(dataset, activation_function, n_epochs))
+        plt.savefig('/workspace/nn/results/mfld/{}/{}/{}/accuracy.png'.format(dataset, activation_function, n_epochs))

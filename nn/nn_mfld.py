@@ -49,10 +49,10 @@ elif dataset == 'usps':
     image_size = 16*16
     output_size = 10
 elif dataset == 'covtype':
-    M = 0
+    M = 3000
     lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-5  # λ  mfld
+    lda2 = 1e-7  # λ  mfld
     image_size = 54
     output_size = 7
 elif dataset == 'ijcnn1':
