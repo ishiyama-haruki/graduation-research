@@ -113,8 +113,8 @@ elif dataset == 'susy':
     output_size = 2
 
 
-train_logname = '/workspace/mfld/results/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
-test_logname = '/workspace/mfld/results/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
+train_logname = '/workspace/nn/results/mfld/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
+test_logname = '/workspace/nn/results/mfld/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
 
 # GPU(CUDA)が使えるかどうか？
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -195,7 +195,8 @@ def train(epoch):
         # 重みの更新
         for p in model.parameters():
             noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-            p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
+            # p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
+            p.data -= lr * (M * p.grad + 2*lda1*p.data) + np.sqrt(2*lr*lda2) * noise
     
     return loss_sum.item()/data_num, correct/data_num
 
