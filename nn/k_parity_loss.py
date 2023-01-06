@@ -57,35 +57,39 @@ class Ntk(nn.Module):
 
 
 mfld = Mfld(d, 1).cuda()
-# ntk = Ntk(d, 1).cuda()
+ntk = Ntk(d, 1).cuda()
 criterion = nn.MSELoss()
 
+# 重みの初期値
+torch.nn.init.kaiming_uniform_(mfld.fc1.weight)
+torch.nn.init.kaiming_uniform_(mfld.fc2.weight)
+torch.nn.init.kaiming_uniform_(ntk.fc1.weight)
+torch.nn.init.kaiming_uniform_(ntk.fc2.weight)
+
 skip = 10
-# result = np.zeros([T//skip,2])
-result = np.zeros([T//skip,1])
+result = np.zeros([T//skip,2])
 
 
 for t in tqdm(range(T)):
-    X,Y = parity(k,d,b_size)
+    X,Y = parity(k,d,b_size)  #X:100x50  Y:100x1
 
-    mfld_loss = criterion(Y, mfld.forward(X))
-    # ntk_loss = criterion(Y, ntk.forward(X))
+    mfld_loss = criterion(mfld.forward(X), Y)
+    ntk_loss = criterion(ntk.forward(X), Y)
 
     mfld_loss.backward()
-    # ntk_loss.backward()
+    ntk_loss.backward()
 
     for p in mfld.parameters():
         noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
         p.data -= lr * (M * p.grad + 2*lda1*p.data) + np.sqrt(2*lr*lda2) * noise
 
-    # for p in ntk.parameters():
-    #     noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-    #     p.data = (1 - 2 * lr * lda1) * p.data - lr * M * p.grad + np.sqrt(2*lr*lda2) * noise
+    for p in ntk.parameters():
+        p.data -= lr * (p.grad + 2*lda1*p.data)
 
     if t % skip == 0:        
 
         result[t//skip,0] = mfld_loss
-        # result[t//skip,1] = ntk_loss
+        result[t//skip,1] = ntk_loss
 
 plt.figure(0)
 FONT_SIZE = 25.5
@@ -93,7 +97,7 @@ plt.rc('font',size=FONT_SIZE)
 fig, (ax1) = plt.subplots(1,figsize=(10,8))
 
 plt.plot(np.arange(1,T+1,skip),result[:,0],linewidth=3,label='mfld loss')
-# plt.plot(np.arange(1,T+1,skip),result[:,0],linewidth=3,label='ntk loss')
+plt.plot(np.arange(1,T+1,skip),result[:,1],linewidth=3,label='ntk loss')
 
 plt.legend()
 plt.xlabel('GD steps')

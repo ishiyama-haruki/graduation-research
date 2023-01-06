@@ -34,81 +34,83 @@ elif dataset == 'shuttle':
 elif dataset == 'susy':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
+# λ' L2正則加項
+# λ  mfld
 if dataset == 'mnist':
     M = 7000
     lr = 1
-    lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
+    lda1 = 1e-7
+    lda2 = 1e-7
     image_size = 719  
     output_size = 10
 elif dataset == 'usps':
     M = 1000
     lr = 1
-    lda1 = 1e-5 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
+    lda1 = 1e-5
+    lda2 = 1e-7 
     image_size = 16*16
     output_size = 10
 elif dataset == 'covtype':
     M = 3000
     lr = 1
-    lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
+    lda1 = 1e-7
+    lda2 = 1e-7 
     image_size = 54
     output_size = 7
 elif dataset == 'ijcnn1':
     M = 7000
     lr = 2
-    lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
+    lda1 = 1e-7
+    lda2 = 1e-7 
     image_size = 22
     output_size = 2
 elif dataset == 'letter':
     M = 5000
-    lr = 0.3
-    lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-3  # λ  mfld
+    lr = 1
+    lda1 = 1e-7
+    lda2 = 1e-7 
     image_size = 16
     output_size = 26
 elif dataset == 'cifar10': # 過学習気味？
     M = 5000
     lr = 0.1
-    lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
+    lda1 = 1e-7
+    lda2 = 1e-7 
     image_size = 3072
     output_size = 10
 elif dataset == 'dna':
     M = 1000
     lr = 1
-    lda1 = 1e-5 # λ'  l2正則化項
-    lda2 =  1e-5 # λ  mfld
+    lda1 = 1e-5
+    lda2 =  1e-5
     image_size = 180
     output_size = 3
 elif dataset == 'aloi':
     M = 5000
     lr = 1
-    lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
+    lda1 = 1e-7
+    lda2 = 1e-7 
     image_size = 128
     output_size = 1000
 elif dataset == 'sector':
     M = 0
     lr = 0
-    lda1 = 0 # λ'  l2正則化項
-    lda2 = 0  # λ  mfld
+    lda1 = 0
+    lda2 = 0 
     image_size = 55197
     output_size = 105
 elif dataset == 'shuttle':
     M = 3000
     lr = 1
-    lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-3  # λ  mfld
+    lda1 = 1e-7
+    lda2 = 1e-3 
     image_size = 9
     output_size = 7
 elif dataset == 'susy':
     M = 0
     lr = 0
-    lda1 = 0 # λ'  l2正則化項
-    lda2 = 0  # λ  mfld
+    lda1 = 0
+    lda2 = 0 
     image_size = 1
     output_size = 2
 
