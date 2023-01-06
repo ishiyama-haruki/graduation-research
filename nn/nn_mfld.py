@@ -65,10 +65,10 @@ elif dataset == 'ijcnn1':
     image_size = 22
     output_size = 2
 elif dataset == 'letter':
-    M = 5000
-    lr = 1
+    M = 7000
+    lr = 0.2
     lda1 = 1e-7
-    lda2 = 1e-7 
+    lda2 = 1e-3 
     image_size = 16
     output_size = 26
 elif dataset == 'cifar10': # 過学習気味？

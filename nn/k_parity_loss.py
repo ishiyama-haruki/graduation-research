@@ -79,6 +79,8 @@ for t in tqdm(range(T)):
     mfld_loss.backward()
     ntk_loss.backward()
 
+    print('mfld loss = {}, ntk loss = {}'.format(mfld_loss, ntk_loss))
+
     for p in mfld.parameters():
         noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
         p.data -= lr * (M * p.grad + 2*lda1*p.data) + np.sqrt(2*lr*lda2) * noise
