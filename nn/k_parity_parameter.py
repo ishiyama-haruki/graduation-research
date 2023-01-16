@@ -37,7 +37,7 @@ T = 10000
 
 # regularization
 lda1 = 1e-3 # weight decay
-lda2 = 1e-3 # entropy
+lda2 = 1e-3 # 正則化項
 
 class Mfld(nn.Module):
     def __init__(self, input_size, output_size):
@@ -87,13 +87,19 @@ criterion = nn.MSELoss()
 # torch.nn.init.normal_(ntk.fc2.weight, mean=0,std=(1/d)**0.5)
 
 
-skip = 10
-result = np.zeros([T//skip,2])
+        
 
-for t in range(T): #tqdm(range(T)):
+skip = 10
+first_laylers = np.zeros([T//skip,2])
+second_laylers = np.zeros([T//skip,2])
+
+for t in tqdm(range(T)):
     # X,Y = parity(k,d,b_size)  
     X,Y = staircase(k,l,d,b_size)
     X = torch.cat([X,torch.ones(b_size,1).to(device)],dim=1)
+
+    mfld.zero_grad()
+    ntk.zero_grad()
 
     mfld_loss = criterion(mfld.forward(X), Y)
     ntk_loss = criterion(ntk.forward(X), Y)
@@ -101,32 +107,49 @@ for t in range(T): #tqdm(range(T)):
     mfld_loss.backward()
     ntk_loss.backward()
 
-    print('mfld loss = {}, ntk loss = {}'.format(mfld_loss, ntk_loss))
-
-    for p in mfld.parameters():
+    
+    for i, p in enumerate(mfld.parameters()):
         noise = torch.FloatTensor(p.data.shape).normal_().to(device)
         p.data -= lr * (M * p.grad + 2*lda1*p.data) + np.sqrt(2*lr*lda2) * noise
-            
+        if i == 0:
+            mfld_1st_param = p.data[10][10]
+        else:
+            mfld_2nd_param = p.data[0][10]
+        
 
-    for p in ntk.parameters():
+    for i, p in enumerate(ntk.parameters()):
         p.data -= lr * (p.grad + 2*lda1*p.data) 
+        if i == 0:
+            ntk_1st_param = p.data[10][10]
+        else:
+            ntk_2nd_param = p.data[0][10]
 
     del X,Y,noise
     torch.cuda.empty_cache()
 
     if t % skip == 0:        
-
-        result[t//skip,0] = mfld_loss
-        result[t//skip,1] = ntk_loss
+        first_laylers[t//skip,0] = mfld_1st_param
+        first_laylers[t//skip,1] = ntk_1st_param
+        second_laylers[t//skip,0] = mfld_2nd_param
+        second_laylers[t//skip,1] = ntk_2nd_param
 
 plt.figure(0)
 FONT_SIZE = 25.5
 plt.rc('font',size=FONT_SIZE)
-fig, (ax1) = plt.subplots(1,figsize=(10,8))
+fig, axes = plt.subplots(nrows=2, ncols=1,figsize=(10,10))
 
-plt.plot(np.arange(1,T+1,skip),result[:,0],linewidth=3,label='mfld loss')
-plt.plot(np.arange(1,T+1,skip),result[:,1],linewidth=3,label='ntk loss')
+axes[0].plot(np.arange(1,T+1,skip),first_laylers[:,0],linewidth=3,label='mfld first layer param')
+axes[0].plot(np.arange(1,T+1,skip),first_laylers[:,1],linewidth=3,label='ntk first layer param')
 
-plt.legend()
-plt.xlabel('GD steps')
-plt.savefig('/workspace/nn/results/debug_pytorch.png')
+axes[0].legend()
+# axes[0].xlabel('GD steps')
+axes[0].set_xlabel('GD steps')
+
+axes[1].plot(np.arange(1,T+1,skip),second_laylers[:,0],linewidth=3,label='mfld second layer param')
+axes[1].plot(np.arange(1,T+1,skip),second_laylers[:,1],linewidth=3,label='ntk second layer param')
+
+axes[1].legend()
+# axes[1].xlabel('GD steps')
+axes[1].set_xlabel('GD steps')
+
+plt.savefig('/workspace/nn/results/k_parity_parameter.png')
