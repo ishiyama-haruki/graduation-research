@@ -72,25 +72,10 @@ mfld = Mfld(d, 1).cuda()
 ntk = Ntk(d, 1).cuda()
 criterion = nn.MSELoss()
 
-# 重みの初期値
-# torch.nn.init.xavier_normal_(mfld.fc1.weight)
-# torch.nn.init.xavier_normal_(mfld.fc2.weight)
-# torch.nn.init.xavier_normal_(ntk.fc1.weight)
-# torch.nn.init.xavier_normal_(ntk.fc2.weight)
-# torch.nn.init.normal_(mfld.fc1.weight, mean=0, std=1)
-# torch.nn.init.normal_(mfld.fc2.weight, mean=0, std=1)
-# torch.nn.init.normal_(ntk.fc1.weight, mean=0, std=1)
-# torch.nn.init.normal_(ntk.fc2.weight, mean=0, std=1)
-# torch.nn.init.normal_(mfld.fc1.weight, mean=0,std=(1/d)**0.5)
-# torch.nn.init.normal_(mfld.fc2.weight, mean=0,std=(1/d)**0.5)
-# torch.nn.init.normal_(ntk.fc1.weight, mean=0,std=(1/d)**0.5)
-# torch.nn.init.normal_(ntk.fc2.weight, mean=0,std=(1/d)**0.5)
-
-
 skip = 10
 result = np.zeros([T//skip,2])
 
-for t in tqdm(range(T)):
+for t in range(T): #tqdm(range(T)):
     # X,Y = parity(k,d,b_size)  
     X,Y = staircase(k,l,d,b_size)
 
@@ -103,7 +88,7 @@ for t in tqdm(range(T)):
     mfld_loss.backward()
     ntk_loss.backward()
 
-    # print('mfld loss = {}, ntk loss = {}'.format(mfld_loss, ntk_loss))
+    print('mfld loss = {}, ntk loss = {}'.format(mfld_loss, ntk_loss))
 
     for p in mfld.parameters():
         noise = torch.FloatTensor(p.data.shape).normal_().to(device)

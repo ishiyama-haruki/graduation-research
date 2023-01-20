@@ -60,13 +60,12 @@ elif dataset == 'susy':
 
 
 n_batch = 128
-M = [1000, 3000, 5000, 7000]
-lr = [1, 1e-1, 1e-2]
+M = 7000 #[1000, 3000, 5000, 7000]
+lr = [1, 1e-1, 1e-2, 1e-3]
 lda1 = [1e-3, 1e-5, 1e-7] # λ'
-lda2 = [1e-3, 1e-5, 1e-7]  # λ
-params = list(itertools.product(M, lr, lda1, lda2))
+params = list(itertools.product(lr, lda1))
 
-print('nn_mfld_kfold_gs.py start!')
+print('nn_ntk_kfold_gs.py start!')
 sys.stdout.flush() # 明示的にflush
 
 
@@ -88,12 +87,12 @@ class Net(nn.Module):
         x = self.fc1(x)
         x = torch.relu(x)
         x = self.fc2(x)
-        x = x / M
+        x = x / np.sqrt(M)
         return x
 
 #----------------------------------------------------------
 # 学習
-def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
+def train(train_dataset, train_dataloader, lr, lda1):
     model.train()  # モデルを訓練モードにする
 
     loss_sum = 0
@@ -129,8 +128,7 @@ def train(train_dataset, train_dataloader, M, lr, lda1, lda2):
 
         # 重みの更新
         for p in model.parameters():
-            noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-            p.data -= lr * (M * p.grad + 2*lda1*p.data) + np.sqrt(2*lr*lda2) * noise
+            p.data -= lr * (p.grad + 2*lda1*p.data) 
 
     return loss_sum.item()/data_num, correct/data_num
 
@@ -178,10 +176,8 @@ for i, param in enumerate(params):
     print(param)
     start_time = time.time()
 
-    M = param[0]
-    lr =  param[1]
-    lda1 = param[2]
-    lda2 = param[3]
+    lr =  param[0]
+    lda1 = param[1]
 
     # ニューラルネットワークの生成
     model = Net(image_size, output_size).cuda()
@@ -199,7 +195,7 @@ for i, param in enumerate(params):
         valid_dataloader = DataLoader(valid_dataset, n_batch, shuffle=False)
 
         for epoch in range(n_epochs):
-            train_loss, train_acc = train(train_dataset, train_dataloader, M, lr, lda1, lda2)
+            train_loss, train_acc = train(train_dataset, train_dataloader, lr, lda1)
         val_loss, val_acc = test(valid_dataset, valid_dataloader)
         val_acc_sum += val_acc
 

@@ -9,7 +9,6 @@ import sys
 
 dataset = sys.argv[1]
 n_epochs = int(sys.argv[2])
-activation_function = sys.argv[3]
 
 if dataset == 'mnist':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_mnist()
@@ -35,10 +34,9 @@ elif dataset == 'susy':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
 if dataset == 'mnist':
-    M = 7000
+    M = 1000
     lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
     image_size = 719  
     output_size = 10
 elif dataset == 'usps':
@@ -63,10 +61,9 @@ elif dataset == 'ijcnn1':
     image_size = 22
     output_size = 2
 elif dataset == 'letter':
-    M = 5000
-    lr = 0.3
+    M = 1000
+    lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-3  # λ  mfld
     image_size = 16
     output_size = 26
 elif dataset == 'cifar10': # 過学習気味？
@@ -113,8 +110,8 @@ elif dataset == 'susy':
     output_size = 2
 
 
-train_logname = '/workspace/nn/results/ntk/{}/{}/{}/train_log.csv'.format(dataset, activation_function, n_epochs)
-test_logname = '/workspace/nn/results/ntk/{}/{}/{}/test_log.csv'.format(dataset, activation_function, n_epochs)
+train_logname = '/workspace/nn/results/ntk/{}/{}/train_log.csv'.format(dataset, n_epochs)
+test_logname = '/workspace/nn/results/ntk/{}/{}/test_log.csv'.format(dataset, n_epochs)
 
 # GPU(CUDA)が使えるかどうか？
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -133,12 +130,7 @@ class Net(nn.Module):
     def forward(self, x):
         # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
         x = self.fc1(x)
-
-        if activation_function == 'relu':
-            x = torch.relu(x)
-        elif activation_function == 'sigmoid':
-            x = torch.sigmoid(x)
-
+        x = torch.relu(x)
         x = self.fc2(x)
         x = x / np.sqrt(M)
         return x
@@ -194,8 +186,7 @@ def train(epoch):
 
         # 重みの更新
         for p in model.parameters():
-            noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-            p.data = (1 - 2 * lr * lda1) * p.data - lr * p.grad + np.sqrt(2*lr*lda2) * noise
+            p.data -= lr * (p.grad + 2*lda1*p.data)  
     
     return loss_sum.item()/data_num, correct/data_num
 
@@ -250,5 +241,5 @@ for epoch in range(n_epochs):
             test_logwriter = csv.writer(test_logfile, delimiter=',')
             test_logwriter.writerow([epoch, "{:.5f}".format(float(test_loss)), "{:.3f}".format(float(test_acc))])
 
-plot_from_csv.plot(dataset, activation_function, n_epochs, True)
+plot_from_csv.plot(dataset, n_epochs, True)
 
