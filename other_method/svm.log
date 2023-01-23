@@ -1,0 +1,7 @@
+dataset is loaded
+--------------------------------------
+best parameters
+{'C': 0.1, 'kernel': 'linear'}
+best train score = 0.9588666666666666
+test score by best moderl = 0.9469
+time: 13830.332012176514

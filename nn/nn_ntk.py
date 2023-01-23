@@ -34,34 +34,31 @@ elif dataset == 'susy':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
 if dataset == 'mnist':
-    M = 1000
+    M = 7000
     lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
     image_size = 719  
     output_size = 10
 elif dataset == 'usps':
-    M = 1000
+    M = 7000
     lr = 1
-    lda1 = 1e-5 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
+    lda1 = 1e-7 # λ'  l2正則化項
     image_size = 16*16
     output_size = 10
 elif dataset == 'covtype':
-    M = 0
+    M = 7000
     lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-5  # λ  mfld
     image_size = 54
     output_size = 7
 elif dataset == 'ijcnn1':
     M = 7000
-    lr = 2
+    lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
-    lda2 = 1e-7  # λ  mfld
     image_size = 22
     output_size = 2
 elif dataset == 'letter':
-    M = 1000
+    M = 7000
     lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
     image_size = 16

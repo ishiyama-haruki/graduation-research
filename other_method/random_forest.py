@@ -1,5 +1,5 @@
 from scripts import sample_data
-from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 import sys
 import time
@@ -31,19 +31,24 @@ elif dataset == 'shuttle':
 elif dataset == 'susy':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
-print('dataset {} is loaded'.format(dataset))
+print('dataset is loaded')
 print('--------------------------------------')
 
 
-model = SVC()
-params = {'C': [0.001, 0.01, 0.1, 1, 10, 100], 'kernel': ['linear']}
-
+model = RandomForestClassifier()
+params = {  
+    'n_estimators': [10, 20, 30, 50, 100, 300],     
+    'max_features': ['sqrt', 'log2','auto', None],
+    'max_depth':    [10, 20, 30, 40, 50, None],     
+    'random_state': [1]
+}
 
 cv = 5
 tuned_model = GridSearchCV(
-    estimator=model, 
-    param_grid=params,
-    cv = cv
+    estimator = model,    
+    param_grid = params,  
+    cv = cv,
+    scoring = 'accuracy'
 )
 tuned_model.fit(X, Y)
 
