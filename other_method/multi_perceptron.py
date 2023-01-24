@@ -1,5 +1,5 @@
 from scripts import sample_data
-from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 import sys
 import time
@@ -35,9 +35,17 @@ print("dataset {} is loaded".format(dataset))
 print('--------------------------------------')
 
 
-model = SVC()
-params = {'C': [0.001, 0.01, 0.1, 1, 10, 100], 'kernel': ['linear']}
+model = MLPClassifier()
 
+params ={
+    'max_iter': [200],
+    'hidden_layer_sizes': [(1000,), (1000, 1000), (1000, 1000, 1000)],
+    'activation': ['relu'],
+    'solver': ['sgd'],
+    'alpha': [1e-3, 1e-5, 1e-7],
+    'batch_size': [128],
+    'learning_rate_init': [1, 1e-1, 1e-2]
+}
 
 cv = 5
 tuned_model = GridSearchCV(

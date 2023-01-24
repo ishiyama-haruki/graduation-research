@@ -1,5 +1,5 @@
 from scripts import sample_data
-from sklearn.svm import SVC
+import xgboost as xgb
 from sklearn.model_selection import GridSearchCV
 import sys
 import time
@@ -34,10 +34,19 @@ elif dataset == 'susy':
 print("dataset {} is loaded".format(dataset))
 print('--------------------------------------')
 
+model = xgb.XGBRegressor(n_jobs=-1)
 
-model = SVC()
-params = {'C': [0.001, 0.01, 0.1, 1, 10, 100], 'kernel': ['linear']}
-
+params ={
+    'max_depth':[3,5,7],
+    'min_child_weight':[1,3],
+    'gamma':[0, 0.2],
+    'subsample':[0, 0.2],
+    'colsample_bytree':[0.6, 0.7],
+    'reg_alpha':[1e-5, 0.1],
+    'n_estimators':[1000],
+    'reg_lambda':[1e-2,0.1],
+    'learning_rate':[0.1]
+}
 
 cv = 5
 tuned_model = GridSearchCV(

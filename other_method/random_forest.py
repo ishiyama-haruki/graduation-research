@@ -31,14 +31,14 @@ elif dataset == 'shuttle':
 elif dataset == 'susy':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
-print('dataset is loaded')
+print("dataset {} is loaded".format(dataset))
 print('--------------------------------------')
 
 
 model = RandomForestClassifier()
 params = {  
     'n_estimators': [10, 20, 30, 50, 100, 300],     
-    'max_features': ['sqrt', 'log2','auto', None],
+    'max_features': ['sqrt', 'log2', None],
     'max_depth':    [10, 20, 30, 40, 50, None],     
     'random_state': [1]
 }
@@ -60,5 +60,5 @@ end_time = time.time()
 print('best parameters')
 print(best_params)
 print('best train score = {}'.format(best_model.score(X, Y)))
-print('test score by best moderl = {}'.format(best_model.score(Xt, Yt)))
+print('test score by best model = {}'.format(best_model.score(Xt, Yt)))
 print('time: {}'.format(end_time- start_time))
