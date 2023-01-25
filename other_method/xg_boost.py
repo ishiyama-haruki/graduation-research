@@ -33,6 +33,7 @@ elif dataset == 'susy':
 
 print("dataset {} is loaded".format(dataset))
 print('--------------------------------------')
+sys.stdout.flush() # 明示的にflush
 
 model = xgb.XGBRegressor(n_jobs=-1)
 
