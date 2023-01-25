@@ -138,6 +138,10 @@ for mfld_param in mfld_params:
     plt.plot(mfld_param['x'][-1], mfld_param['y'][-1], '.', markersize=20, color='y')
     plt.plot(mfld_param['x'], mfld_param['y'], color='darkviolet', linewidth=3)
 
+plt.scatter([], [], label = "initial", color = "darkviolet")
+plt.scatter([], [], label = "trained", color = "y")
+plt.legend()
+
 plt.savefig('/workspace/nn/results/mfld_parameters.png')
 
 # ntkの描画
@@ -149,5 +153,9 @@ for ntk_param in ntk_params:
     plt.plot(ntk_param['x'][0], ntk_param['y'][0], '.', markersize=20, color='darkviolet')
     plt.plot(ntk_param['x'][-1], ntk_param['y'][-1], '.', markersize=20, color='y')
     plt.plot(ntk_param['x'], ntk_param['y'], color='darkviolet', linewidth=3)
+
+plt.scatter([], [], label = "initial", color = "darkviolet")
+plt.scatter([], [], label = "trained", color = "y")
+plt.legend()
 
 plt.savefig('/workspace/nn/results/ntk_parameters.png')
