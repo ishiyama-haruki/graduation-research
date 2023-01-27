@@ -60,10 +60,10 @@ elif dataset == 'susy':
 
 
 n_batch = 128
-M = 7000 #[1000, 3000, 5000, 7000]
+M = [1000, 3000, 5000, 7000]
 lr = [1, 1e-1, 1e-2, 1e-3]
 lda1 = [1e-3, 1e-5, 1e-7] # λ'
-params = list(itertools.product(lr, lda1))
+params = list(itertools.product(M, lr, lda1))
 
 print('nn_ntk_kfold_gs.py start!')
 sys.stdout.flush() # 明示的にflush
@@ -80,14 +80,16 @@ class Net(nn.Module):
 
         # 各クラスのインスタンス（入出力サイズなどの設定）
         self.fc1 = nn.Linear(input_size, M)
-        self.fc2 = nn.Linear(M, output_size)
+        self.fc2 = nn.Linear(M, M)
+        self.fc3 = nn.Linear(M, output_size)
 
     def forward(self, x):
         # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
-        x = self.fc1(x)
+        x = self.fc1(x)*np.sqrt(M)
         x = torch.relu(x)
         x = self.fc2(x)
-        x = x / np.sqrt(M)
+        x = torch.relu(x)
+        x = self.fc3(x)/np.sqrt(M)
         return x
 
 #----------------------------------------------------------
@@ -176,11 +178,17 @@ for i, param in enumerate(params):
     print(param)
     start_time = time.time()
 
-    lr =  param[0]
-    lda1 = param[1]
+    M = param[0]
+    lr =  param[1]
+    lda1 = param[2]
 
     # ニューラルネットワークの生成
     model = Net(image_size, output_size).cuda()
+
+    # 重みの初期値
+    torch.nn.init.normal_(model.fc1.weight, mean=0, std=1/np.sqrt(M))
+    torch.nn.init.normal_(model.fc2.weight, mean=0, std=1/np.sqrt(M))
+    torch.nn.init.normal_(model.fc3.weight, mean=0, std=1/np.sqrt(M))
     #----------------------------------------------------------
     # 損失関数の設定
     criterion = nn.CrossEntropyLoss()

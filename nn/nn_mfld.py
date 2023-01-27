@@ -145,9 +145,11 @@ class Net(nn.Module):
 # ニューラルネットワークの生成
 model = Net(image_size, output_size).cuda()
 
-# # 重みの初期値
-torch.nn.init.kaiming_uniform_(model.fc1.weight)
-torch.nn.init.kaiming_uniform_(model.fc2.weight)
+# 重みの初期値
+# torch.nn.init.kaiming_uniform_(model.fc1.weight)
+# torch.nn.init.kaiming_uniform_(model.fc2.weight)
+torch.nn.init.normal_(model.fc1.weight, mean=0, std=1)
+torch.nn.init.normal_(model.fc2.weight, mean=0, std=1)
 
 #----------------------------------------------------------
 # 損失関数の設定

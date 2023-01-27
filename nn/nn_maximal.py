@@ -147,10 +147,6 @@ class Net(nn.Module):
 model = Net(image_size, output_size).cuda()
 
 # 重みの初期値
-# torch.nn.init.kaiming_uniform_(model.fc1.weight)
-# torch.nn.init.kaiming_uniform_(model.fc2.weight)
-# torch.nn.init.kaiming_uniform_(model.fc3.weight)
-
 torch.nn.init.normal_(model.fc1.weight, mean=0, std=1/np.sqrt(M))
 torch.nn.init.normal_(model.fc2.weight, mean=0, std=1/np.sqrt(M))
 torch.nn.init.normal_(model.fc3.weight, mean=0, std=1/np.sqrt(M))
