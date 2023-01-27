@@ -38,9 +38,8 @@ sys.stdout.flush() # 明示的にflush
 
 model = RandomForestClassifier()
 params = {  
-    'n_estimators': [10, 20, 30, 50, 100, 300],     
-    'max_features': ['sqrt', 'log2', None],
-    'max_depth':    [10, 20, 30, 40, 50, None],     
+    'n_estimators': [100, 500, 1000],
+    'max_depth':    [10, 20, 30],     
     'random_state': [1]
 }
 

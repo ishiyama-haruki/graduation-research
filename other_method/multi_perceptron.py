@@ -39,7 +39,7 @@ sys.stdout.flush() # 明示的にflush
 model = MLPClassifier()
 
 params ={
-    'max_iter': [200],
+    'max_iter': [100],
     'hidden_layer_sizes': [(1000,), (1000, 1000), (1000, 1000, 1000)],
     'activation': ['relu'],
     'solver': ['sgd'],

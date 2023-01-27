@@ -31,7 +31,7 @@ d = 100
 b_size = 50
 
 # model parameters
-M = 2048
+M = 7000
 lr = 1e-2
 T = 10000
 
@@ -116,4 +116,4 @@ plt.plot(np.arange(1,T+1,skip),result[:,1],linewidth=3,label='ntk loss')
 
 plt.legend()
 plt.xlabel('GD steps')
-plt.savefig('/workspace/nn/results/k_parity_loss.png')
+plt.savefig('/workspace/nn/results/comparison_loss.png')

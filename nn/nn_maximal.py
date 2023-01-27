@@ -34,7 +34,7 @@ elif dataset == 'susy':
     X, Y, Xt, Yt, train_dataset, train_dataloader, test_dataset, test_dataloader = sample_data.get_susy()
 
 # λ' L2正則加項
-# λ  mfld
+# λ  maximal
 if dataset == 'mnist':
     M = 5000
     lr = 1
@@ -114,8 +114,8 @@ elif dataset == 'susy':
     output_size = 2
 
 
-train_logname = '/workspace/nn/results/mfld/{}/{}/train_log.csv'.format(dataset, n_epochs)
-test_logname = '/workspace/nn/results/mfld/{}/{}/test_log.csv'.format(dataset, n_epochs)
+train_logname = '/workspace/nn/results/maximal/{}/{}/train_log.csv'.format(dataset, n_epochs)
+test_logname = '/workspace/nn/results/maximal/{}/{}/test_log.csv'.format(dataset, n_epochs)
 
 # GPU(CUDA)が使えるかどうか？
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -129,15 +129,16 @@ class Net(nn.Module):
 
         # 各クラスのインスタンス（入出力サイズなどの設定）
         self.fc1 = nn.Linear(input_size, M)
-        self.fc2 = nn.Linear(M, output_size)
+        self.fc2 = nn.Linear(M, M)
+        self.fc3 = nn.Linear(M, output_size)
 
     def forward(self, x):
         # 順伝播の設定（インスタンスしたクラスの特殊メソッド(__call__)を実行）
-        x = self.fc1(x)
+        x = self.fc1(x)*np.sqrt(M)
         x = torch.relu(x)
-        
         x = self.fc2(x)
-        x = x / M
+        x = torch.relu(x)
+        x = self.fc3(x)/np.sqrt(M)
         return x
 
 
@@ -145,9 +146,14 @@ class Net(nn.Module):
 # ニューラルネットワークの生成
 model = Net(image_size, output_size).cuda()
 
-# # 重みの初期値
-torch.nn.init.kaiming_uniform_(model.fc1.weight)
-torch.nn.init.kaiming_uniform_(model.fc2.weight)
+# 重みの初期値
+# torch.nn.init.kaiming_uniform_(model.fc1.weight)
+# torch.nn.init.kaiming_uniform_(model.fc2.weight)
+# torch.nn.init.kaiming_uniform_(model.fc3.weight)
+
+torch.nn.init.normal_(model.fc1.weight, mean=0, std=1/np.sqrt(M))
+torch.nn.init.normal_(model.fc2.weight, mean=0, std=1/np.sqrt(M))
+torch.nn.init.normal_(model.fc3.weight, mean=0, std=1/np.sqrt(M))
 
 #----------------------------------------------------------
 # 損失関数の設定
@@ -191,8 +197,7 @@ def train(epoch):
 
         # 重みの更新
         for p in model.parameters():
-            noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-            p.data -= lr * (M * p.grad + 2*lda1*p.data) + np.sqrt(2*lr*lda2) * noise
+            p.data -= lr * (p.grad + 2*lda1*p.data)  
     
     return loss_sum.item()/data_num, correct/data_num
 
@@ -247,5 +252,5 @@ for epoch in range(n_epochs):
             test_logwriter = csv.writer(test_logfile, delimiter=',')
             test_logwriter.writerow([epoch, "{:.5f}".format(float(test_loss)), "{:.3f}".format(float(test_acc))])
 
-plot_from_csv.plot(dataset, n_epochs, 'mfld')
+plot_from_csv.plot(dataset, n_epochs, 'maximal')
 

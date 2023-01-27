@@ -19,13 +19,33 @@ def datasets(b_size, d):
     Y = torch.from_numpy(Y.astype(np.float32)).clone().cuda()
     return X,Y.unsqueeze(dim=1)
 
+def parity(k,d,n):
+    assert d >= k
+    X = ((((torch.rand(n,d) < 0.5)) * 2 - 1).float()).to(device)
+    Y = torch.prod(X[:,:k],dim=1)
+    return X,Y.unsqueeze(dim=1)
+
+def staircase(k,l,d,n):
+    assert d >= k
+    assert k >= l and l > 0
+    X = ((((torch.rand(n,d) < 0.5)) * 2 - 1).float()).to(device)
+    # Y = torch.prod(X[:,:k],dim=1)
+    Y = torch.zeros([n]).to(device)
+    for i in range(k-l+1):
+        Y += torch.prod(X[:,:k-i],dim=1)
+    Y = torch.sign(Y)
+    Y[Y==0] = -1
+    return X,Y.unsqueeze(dim=1)
+
+k = 2 # degree
+l = 3 # leap
 d = 2
 b_size = 50
 
-num = 2
+num = 5
 
 # model parameters
-M = 2048
+M = 7000
 lr = 1e-2
 T = 10000
 
@@ -88,7 +108,9 @@ for p in ntk.parameters():
 
 skip = 10
 for t in tqdm(range(T)):
-    X, Y = datasets(b_size, d)
+    # X, Y = datasets(b_size, d)
+    X,Y = parity(k,d,b_size)
+    # X,Y = staircase(k,l,d,b_size)
 
     mfld.zero_grad()
     ntk.zero_grad()
@@ -131,7 +153,6 @@ for t in tqdm(range(T)):
 plt.figure(0)
 FONT_SIZE = 25.5
 plt.rc('font',size=FONT_SIZE)
-fig, (ax1) = plt.subplots(1,figsize=(10,8))
 
 for mfld_param in mfld_params:
     plt.plot(mfld_param['x'][0], mfld_param['y'][0], '.', markersize=20, color='darkviolet')
@@ -142,13 +163,19 @@ plt.scatter([], [], label = "initial", color = "darkviolet")
 plt.scatter([], [], label = "trained", color = "y")
 plt.legend()
 
+# xlim = plt.xlim()
+plt.xlim(left=-5, right=5)
+
 plt.savefig('/workspace/nn/results/mfld_parameters.png')
 
 # ntkの描画
+plt.clf()
 plt.figure(0)
 FONT_SIZE = 25.5
 plt.rc('font',size=FONT_SIZE)
-fig, (ax1) = plt.subplots(1,figsize=(10,8))
+# plt.xlim(left=xlim[0], right=xlim[1])
+plt.xlim(left=-5, right=5)
+
 for ntk_param in ntk_params:
     plt.plot(ntk_param['x'][0], ntk_param['y'][0], '.', markersize=20, color='darkviolet')
     plt.plot(ntk_param['x'][-1], ntk_param['y'][-1], '.', markersize=20, color='y')

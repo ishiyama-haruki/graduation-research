@@ -1,7 +1,7 @@
-dataset letter is loaded
+dataset ijcnn1 is loaded
 --------------------------------------
 best parameters
 {'max_depth': 30, 'n_estimators': 1000, 'random_state': 1}
 best train score = 1.0
-test score by best model = 0.9646
-time: 1629.296205997467
+test score by best model = 0.9810143837035583
+time: 2435.7137184143066

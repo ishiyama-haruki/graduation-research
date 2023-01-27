@@ -2,14 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
-def plot(dataset, n_epochs, ntk=False):
+def plot(dataset, n_epochs, p):
 
-    if ntk:
-        train_logname = '/workspace/nn/results/ntk/{}/{}/train_log.csv'.format(dataset, n_epochs)
-        test_logname = '/workspace/nn/results/ntk/{}/{}/test_log.csv'.format(dataset, n_epochs)
-    else:
-        train_logname = '/workspace/nn/results/mfld/{}/{}/train_log.csv'.format(dataset, n_epochs)
-        test_logname = '/workspace/nn/results/mfld/{}/{}/test_log.csv'.format(dataset, n_epochs)
+    train_logname = '/workspace/nn/results/{}/{}/{}/train_log.csv'.format(p, dataset, n_epochs)
+    test_logname = '/workspace/nn/results/{}/{}/{}/test_log.csv'.format(p, dataset, n_epochs)
 
     #訓練データ
     epoch_list = []
@@ -39,7 +35,4 @@ def plot(dataset, n_epochs, ntk=False):
 
     plt.legend()
 
-    if ntk:
-        plt.savefig('/workspace/nn/results/ntk/{}/{}/accuracy.png'.format(dataset, n_epochs))
-    else:
-        plt.savefig('/workspace/nn/results/mfld/{}/{}/accuracy.png'.format(dataset, n_epochs))
+    plt.savefig('/workspace/nn/results/{}/{}/{}/accuracy.png'.format(p, dataset, n_epochs))

@@ -1,7 +1,7 @@
 dataset usps is loaded
 --------------------------------------
 best parameters
-{'max_depth': 30, 'max_features': 'sqrt', 'n_estimators': 300, 'random_state': 1}
+{'max_depth': 20, 'n_estimators': 500, 'random_state': 1}
 best train score = 1.0
-test score by best model = 0.9397110114598903
-time: 23547.1063477993
+test score by best model = 0.9387144992526159
+time: 1539.8132538795471

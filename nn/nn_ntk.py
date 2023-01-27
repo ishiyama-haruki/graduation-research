@@ -238,5 +238,5 @@ for epoch in range(n_epochs):
             test_logwriter = csv.writer(test_logfile, delimiter=',')
             test_logwriter.writerow([epoch, "{:.5f}".format(float(test_loss)), "{:.3f}".format(float(test_acc))])
 
-plot_from_csv.plot(dataset, n_epochs, True)
+plot_from_csv.plot(dataset, n_epochs, 'ntk')
 
