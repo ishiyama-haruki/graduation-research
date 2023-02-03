@@ -57,10 +57,10 @@ elif dataset == 'covtype':
     image_size = 54
     output_size = 7
 elif dataset == 'ijcnn1':
-    M = 7000
-    lr = 2
+    M = 5000
+    lr = 1
     lda1 = 1e-7
-    lda2 = 1e-7 
+    lda2 = 1e-5 
     image_size = 22
     output_size = 2
 elif dataset == 'letter':
@@ -70,48 +70,6 @@ elif dataset == 'letter':
     lda2 = 1e-5 
     image_size = 16
     output_size = 26
-elif dataset == 'cifar10': # 過学習気味？
-    M = 5000
-    lr = 0.1
-    lda1 = 1e-7
-    lda2 = 1e-7 
-    image_size = 3072
-    output_size = 10
-elif dataset == 'dna':
-    M = 1000
-    lr = 1
-    lda1 = 1e-5
-    lda2 =  1e-5
-    image_size = 180
-    output_size = 3
-elif dataset == 'aloi':
-    M = 5000
-    lr = 1
-    lda1 = 1e-7
-    lda2 = 1e-7 
-    image_size = 128
-    output_size = 1000
-elif dataset == 'sector':
-    M = 0
-    lr = 0
-    lda1 = 0
-    lda2 = 0 
-    image_size = 55197
-    output_size = 105
-elif dataset == 'shuttle':
-    M = 3000
-    lr = 1
-    lda1 = 1e-7
-    lda2 = 1e-3 
-    image_size = 9
-    output_size = 7
-elif dataset == 'susy':
-    M = 0
-    lr = 0
-    lda1 = 0
-    lda2 = 0 
-    image_size = 1
-    output_size = 2
 
 
 train_logname = '/workspace/nn/results/mfld/{}/{}/train_log.csv'.format(dataset, n_epochs)
@@ -146,8 +104,6 @@ class Net(nn.Module):
 model = Net(image_size, output_size).cuda()
 
 # 重みの初期値
-# torch.nn.init.kaiming_uniform_(model.fc1.weight)
-# torch.nn.init.kaiming_uniform_(model.fc2.weight)
 torch.nn.init.normal_(model.fc1.weight, mean=0, std=1)
 torch.nn.init.normal_(model.fc2.weight, mean=0, std=1)
 

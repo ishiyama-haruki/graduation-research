@@ -86,6 +86,12 @@ mfld = Mfld(d, 1).cuda()
 ntk = Ntk(d, 1).cuda()
 criterion = nn.MSELoss()
 
+# 重みの初期値
+torch.nn.init.normal_(mfld.fc1.weight, mean=0, std=1)
+torch.nn.init.normal_(mfld.fc2.weight, mean=0, std=1)
+torch.nn.init.normal_(ntk.fc1.weight, mean=0, std=1)
+torch.nn.init.normal_(ntk.fc2.weight, mean=0, std=1)
+
 mfld_params = []
 ntk_params = []
 
@@ -149,6 +155,16 @@ for t in tqdm(range(T)):
                 ntk_params[i]['y'].append(single_p[1].item())
             break
 
+#テスト精度の算出
+mfld.eval()
+ntk.eval()
+Xt, Yt = X,Y = parity(k,d,b_size)
+mfld_loss = criterion(mfld.forward(Xt), Yt)
+ntk_loss = criterion(ntk.forward(Xt), Yt)
+print('mfld_loss={}'.format(mfld_loss))
+print('ntk_loss={}'.format(ntk_loss))
+
+
 # mfldの描画
 plt.figure(0)
 FONT_SIZE = 25.5
@@ -163,7 +179,6 @@ plt.scatter([], [], label = "initial", color = "darkviolet")
 plt.scatter([], [], label = "trained", color = "y")
 plt.legend()
 
-# xlim = plt.xlim()
 plt.xlim(left=-5, right=5)
 
 plt.savefig('/workspace/nn/results/mfld_parameters.png')
@@ -173,7 +188,6 @@ plt.clf()
 plt.figure(0)
 FONT_SIZE = 25.5
 plt.rc('font',size=FONT_SIZE)
-# plt.xlim(left=xlim[0], right=xlim[1])
 plt.xlim(left=-5, right=5)
 
 for ntk_param in ntk_params:
