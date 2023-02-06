@@ -2,6 +2,6 @@ dataset letter is loaded
 --------------------------------------
 best parameters
 {'C': 100, 'kernel': 'linear'}
-best train score = 0.8722
-test score by best moderl = 0.8512
-time: 157.7005262374878
+best train score = 0.8722666666666666
+test score by best model = 0.8512
+time: 806.7083864212036

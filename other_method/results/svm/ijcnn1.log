@@ -1,7 +1,2 @@
 dataset ijcnn1 is loaded
 --------------------------------------
-best parameters
-{'C': 1, 'kernel': 'linear'}
-best train score = 0.9246849369873975
-test score by best moderl = 0.9218111034776065
-time: 7577.42905831337

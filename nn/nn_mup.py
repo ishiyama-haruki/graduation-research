@@ -50,7 +50,7 @@ elif dataset == 'usps':
 elif dataset == 'covtype':
     M = 5000
     lr = 1
-    lda1 = 1e-5
+    lda1 = 1e-7
     image_size = 54
     output_size = 7
 elif dataset == 'ijcnn1':
@@ -67,9 +67,8 @@ elif dataset == 'letter':
     output_size = 26
 
 
-# train_logname = '/workspace/nn/results/mup/{}/{}/train_log.csv'.format(dataset, n_epochs)
-# test_logname = '/workspace/nn/results/mup/{}/{}/test_log.csv'.format(dataset, n_epochs)
-test_logname = '/workspace/nn/results/mup/5000_1_1e-5.log'
+train_logname = '/workspace/nn/results/mup/{}/{}/train_log.csv'.format(dataset, n_epochs)
+test_logname = '/workspace/nn/results/mup/{}/{}/test_log.csv'.format(dataset, n_epochs)
 
 # GPU(CUDA)が使えるかどうか？
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -190,9 +189,9 @@ for epoch in range(n_epochs):
     train_loss, train_acc = train(epoch)
     print("epoch", epoch+1, " train_loss:{:.5f}".format(train_loss), "train_acc:{:.2f}".format(train_acc))
     
-    # with open(train_logname, 'a') as train_logfile:
-    #     train_logwriter = csv.writer(train_logfile, delimiter=',')
-    #     train_logwriter.writerow([epoch, "{:.5f}".format(float(train_loss)), "{:.3f}".format(float(train_acc))])
+    with open(train_logname, 'a') as train_logfile:
+        train_logwriter = csv.writer(train_logfile, delimiter=',')
+        train_logwriter.writerow([epoch, "{:.5f}".format(float(train_loss)), "{:.3f}".format(float(train_acc))])
     
     if (epoch+1)%5 == 0:
         test_loss, test_acc = test(epoch)
@@ -202,5 +201,5 @@ for epoch in range(n_epochs):
             test_logwriter = csv.writer(test_logfile, delimiter=',')
             test_logwriter.writerow([epoch, "{:.5f}".format(float(test_loss)), "{:.3f}".format(float(test_acc))])
 
-# plot_from_csv.plot(dataset, n_epochs, 'mup')
+plot_from_csv.plot(dataset, n_epochs, 'mup')
 

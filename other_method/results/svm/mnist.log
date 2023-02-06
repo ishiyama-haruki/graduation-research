@@ -1,7 +1,2 @@
 dataset mnist is loaded
 --------------------------------------
-best parameters
-{'C': 0.1, 'kernel': 'linear'}
-best train score = 0.95885
-test score by best moderl = 0.9469
-time: 15098.542563438416

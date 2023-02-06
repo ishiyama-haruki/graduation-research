@@ -37,7 +37,10 @@ sys.stdout.flush() # 明示的にflush
 
 
 model = SVC()
-params = {'C': [0.001, 0.01, 0.1, 1, 10, 100], 'kernel': ['linear']}
+params = [
+    {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
+    {'C': [1, 10, 100, 1000], 'kernel': ['rbf'], 'gamma': [0.001, 0.0001]}
+]
 
 
 cv = 5

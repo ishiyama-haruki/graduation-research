@@ -1,2 +1,7 @@
 dataset covtype is loaded
 --------------------------------------
+best parameters
+{'max_depth': 30, 'n_estimators': 1000, 'random_state': 1}
+best train score = 0.9971407610437836
+test score by best model = 0.9498377838782132
+time: 34440.60016322136

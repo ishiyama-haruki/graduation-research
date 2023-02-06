@@ -51,20 +51,20 @@ class Net(nn.Module):
         x = self.fc1(x)
         x = torch.relu(x)
         x = self.fc2(x)
-        x = x / M
+        x = x / np.sqrt(M)
         return x
 
 
 #----------------------------------------------------------
 # 学習
-def train(dataloader):
+def train(train_dataloader):
     model.train()  # モデルを訓練モードにする
 
     loss_sum = 0
     correct = 0
     data_num = 0
 
-    for inputs, labels in dataloader:
+    for inputs, labels in train_dataloader:
         # 勾配の初期化
         model.zero_grad()
 
@@ -93,8 +93,7 @@ def train(dataloader):
 
         # 重みの更新
         for p in model.parameters():
-            noise = torch.normal(mean=torch.zeros_like(p.data), std=torch.ones_like(p.data)).cuda()
-            p.data -= lr * (M * p.grad + 2*lda1*p.data) + np.sqrt(2*lr*lda2) * noise
+            p.data -= lr * (p.grad + 2*lda1*p.data)  
     
     return loss_sum.item()/data_num, correct/data_num
 
@@ -135,40 +134,34 @@ result_dict = {}
 for dataset_name, dataloaders in dataloader_dict.items():
     print('{} start'.format(dataset_name))
     # λ' L2正則加項
-    # λ  mfld
     if dataset_name == 'mnist':
-        M = 5000
+        M = 7000
         lr = 1
-        lda1 = 1e-7
-        lda2 = 1e-5
+        lda1 = 1e-7 # λ'  l2正則化項
         image_size = 719  
         output_size = 10
     elif dataset_name == 'usps':
-        M = 1000
+        M = 7000
         lr = 1
-        lda1 = 1e-5
-        lda2 = 1e-7 
+        lda1 = 1e-7 # λ'  l2正則化項
         image_size = 16*16
         output_size = 10
     elif dataset_name == 'covtype':
         M = 7000
         lr = 1
-        lda1 = 1e-7
-        lda2 = 1e-5 
+        lda1 = 1e-7 # λ'  l2正則化項
         image_size = 54
         output_size = 7
     elif dataset_name == 'ijcnn1':
-        M = 5000
+        M = 7000
         lr = 1
-        lda1 = 1e-7
-        lda2 = 1e-5 
+        lda1 = 1e-7 # λ'  l2正則化項
         image_size = 22
         output_size = 2
     elif dataset_name == 'letter':
         M = 7000
         lr = 1
-        lda1 = 1e-7
-        lda2 = 1e-5 
+        lda1 = 1e-7 # λ'  l2正則化項
         image_size = 16
         output_size = 26
 
@@ -185,9 +178,11 @@ for dataset_name, dataloaders in dataloader_dict.items():
         if (epoch+1)%5 == 0:
             test_loss, test_acc = test(dataloaders['test'])
 
-            with open('/workspace/nn/results/mfld/{}/loss.csv'.format(dataset_name), 'a') as test_logfile:
+            with open('/workspace/nn/results/ntk/{}/acc.csv'.format(dataset_name), 'a') as test_logfile:
                 test_logwriter = csv.writer(test_logfile, delimiter=',')
-                test_logwriter.writerow([epoch, "{:.5f}".format(float(test_loss)), "{:.3f}".format(float(test_acc))])
+                test_logwriter.writerow([epoch, "{:.5f}".format(float(test_acc)), "{:.3f}".format(float(test_acc))])
+
+
     
     
     
