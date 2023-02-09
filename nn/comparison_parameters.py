@@ -177,7 +177,7 @@ for mfld_param in mfld_params:
 
 plt.scatter([], [], label = "initial", color = "darkviolet")
 plt.scatter([], [], label = "trained", color = "y")
-plt.legend()
+plt.legend(loc='lower left')
 
 plt.xlim(left=-5, right=5)
 
@@ -197,6 +197,6 @@ for ntk_param in ntk_params:
 
 plt.scatter([], [], label = "initial", color = "darkviolet")
 plt.scatter([], [], label = "trained", color = "y")
-plt.legend()
+plt.legend(loc='lower left')
 
 plt.savefig('/workspace/nn/results/ntk_parameters.png')

@@ -59,7 +59,7 @@ elif dataset == 'ijcnn1':
     output_size = 2
 elif dataset == 'letter':
     M = 7000
-    lr = 0.1
+    lr = 1
     lda1 = 1e-7 # λ'  l2正則化項
     image_size = 16
     output_size = 26

@@ -42,7 +42,7 @@ if dataset == 'mnist':
     image_size = 719  
     output_size = 10
 elif dataset == 'usps':
-    M = 3000
+    M = 7000
     lr = 0.1
     lda1 = 1e-5
     image_size = 16*16

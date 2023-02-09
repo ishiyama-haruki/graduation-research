@@ -1,5 +1,5 @@
 from scripts import sample_data
-from lightgbm import LGBMRegressor
+import lightgbm as lgb
 from sklearn.model_selection import GridSearchCV
 import sys
 import time
@@ -35,20 +35,23 @@ print("dataset {} is loaded".format(dataset))
 print('--------------------------------------')
 sys.stdout.flush() # 明示的にflush
 
-model = LGBMRegressor()
+model = lgb.LGBMClassifier()
 
-params ={
-    'n_estimators': [1000],
-    'eta': [1e-3, 1e-2, 0.1, 1],
-    'num_leaves': [16, 32, 64, 128, 256, 512, 1024]
+params = {
+    'learning_rate' :  [1e-3],#[1e-3, 1e-2, 0.1, 1],
+    'num_leaves': [16],#[16, 32, 64, 128, 256, 512, 1024],
+    'n_estimators': [10],#[500, 1000]
+    'max_depth': [2]
 }
 
 cv = 5
 tuned_model = GridSearchCV(
     estimator=model, 
     param_grid=params,
-    cv = cv
+    cv = cv,
+    verbose = 100
 )
+
 tuned_model.fit(X, Y)
 
 best_model = tuned_model.best_estimator_
