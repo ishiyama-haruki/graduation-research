@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from sklearn.datasets import make_blobs
 from tqdm import tqdm
 
@@ -47,7 +48,7 @@ num = 5
 # model parameters
 M = 7000
 lr = 1e-2
-T = 10000
+T = 5000
 
 # regularization
 lda1 = 1e-3 # weight decay
@@ -97,17 +98,25 @@ ntk_params = []
 
 # 最初のパラメータの保存
 for p in mfld.parameters():
+    xs = []
+    ys = []
     for i, single_p in enumerate(p.data):
         if i == num:
             break
-        mfld_params.append({'x': [single_p[0].item()], 'y': [single_p[1].item()]})
+        xs.append(single_p[0].item())
+        ys.append(single_p[1].item())
+    mfld_params.append({'x': xs, 'y': ys})
     break
 
 for p in ntk.parameters():
+    xs = []
+    ys = []
     for i, single_p in enumerate(p.data):
         if i == num:
             break
-        ntk_params.append({'x': [single_p[0].item()], 'y': [single_p[1].item()]})
+        xs.append(single_p[0].item())
+        ys.append(single_p[1].item())
+    ntk_params.append({'x': xs, 'y': ys})
     break
 
 
@@ -141,18 +150,27 @@ for t in tqdm(range(T)):
 
     if t % skip == 0:        
         for p in mfld.parameters():
+    
+            xs = []
+            ys = []
             for i, single_p in enumerate(p.data):
                 if i == num:
                     break
-                mfld_params[i]['x'].append(single_p[0].item())
-                mfld_params[i]['y'].append(single_p[1].item())
+                xs.append(single_p[0].item())
+                ys.append(single_p[1].item())
+            mfld_params.append({'x': xs, 'y': ys})
             break
+
         for p in ntk.parameters():
+    
+            xs = []
+            ys = []
             for i, single_p in enumerate(p.data):
                 if i == num:
                     break
-                ntk_params[i]['x'].append(single_p[0].item())
-                ntk_params[i]['y'].append(single_p[1].item())
+                xs.append(single_p[0].item())
+                ys.append(single_p[1].item())
+            ntk_params.append({'x': xs, 'y': ys})
             break
 
 #テスト精度の算出
@@ -165,22 +183,24 @@ print('mfld_loss={}'.format(mfld_loss))
 print('ntk_loss={}'.format(ntk_loss))
 
 
+map = plt.get_cmap('plasma')
+total = T / skip
+
 # mfldの描画
 plt.figure(0)
 FONT_SIZE = 25.5
 plt.rc('font',size=FONT_SIZE)
+plt.xlim(-3, 3)
+plt.ylim(-3, 3)
+for i, mfld_param in enumerate(mfld_params):
+    if i == 0:
+        plt.scatter(mfld_param['x'], mfld_param['y'], color=map(i/total), s=100, label="initial")
+    elif i == len(mfld_params)-1:
+        plt.scatter(mfld_param['x'], mfld_param['y'], color=map(i/total), s=100, label="trained")
+    else:
+        plt.scatter(mfld_param['x'], mfld_param['y'], color=map(i/total), s=30)
 
-for mfld_param in mfld_params:
-    plt.plot(mfld_param['x'][0], mfld_param['y'][0], '.', markersize=20, color='darkviolet')
-    plt.plot(mfld_param['x'][-1], mfld_param['y'][-1], '.', markersize=20, color='y')
-    plt.plot(mfld_param['x'], mfld_param['y'], color='darkviolet', linewidth=3)
-
-plt.scatter([], [], label = "initial", color = "darkviolet")
-plt.scatter([], [], label = "trained", color = "y")
-plt.legend(loc='lower left')
-
-plt.xlim(left=-5, right=5)
-
+plt.legend()
 plt.savefig('/workspace/nn/results/mfld_parameters.png')
 
 # ntkの描画
@@ -188,15 +208,15 @@ plt.clf()
 plt.figure(0)
 FONT_SIZE = 25.5
 plt.rc('font',size=FONT_SIZE)
-plt.xlim(left=-5, right=5)
+plt.xlim(-3, 3)
+plt.ylim(-3, 3)
+for i, ntk_param in enumerate(ntk_params):
+    if i == 0:
+        plt.scatter(ntk_param['x'], ntk_param['y'], color=map(i/total), s=100, label="initial")
+    elif i == len(ntk_params)-1:
+        plt.scatter(ntk_param['x'], ntk_param['y'], color=map(i/total), s=100, label="trained")
+    else:
+        plt.scatter(ntk_param['x'], ntk_param['y'], color=map(i/total), s=30)
 
-for ntk_param in ntk_params:
-    plt.plot(ntk_param['x'][0], ntk_param['y'][0], '.', markersize=20, color='darkviolet')
-    plt.plot(ntk_param['x'][-1], ntk_param['y'][-1], '.', markersize=20, color='y')
-    plt.plot(ntk_param['x'], ntk_param['y'], color='darkviolet', linewidth=3)
-
-plt.scatter([], [], label = "initial", color = "darkviolet")
-plt.scatter([], [], label = "trained", color = "y")
-plt.legend(loc='lower left')
-
+plt.legend()
 plt.savefig('/workspace/nn/results/ntk_parameters.png')

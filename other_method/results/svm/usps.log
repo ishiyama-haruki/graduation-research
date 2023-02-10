@@ -1,7 +1,7 @@
 dataset usps is loaded
 --------------------------------------
 best parameters
-{'C': 100, 'gamma': 0.001, 'kernel': 'rbf'}
-best train score = 0.9832670415580853
-test score by best model = 0.9372197309417041
-time: 163.0663182735443
+{'C': 1000, 'gamma': 0.001, 'kernel': 'rbf'}
+best train score = 0.9973940474557674
+test score by best model = 0.9387144992526159
+time: 139.30816674232483

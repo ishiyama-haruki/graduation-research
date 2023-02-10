@@ -1,6 +1,7 @@
 from scripts import sample_data
-import lightgbm as lgb
+from catboost import CatBoostClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import make_scorer, accuracy_score
 import numpy as np
 import sys
 import time
@@ -36,27 +37,23 @@ print("dataset {} is loaded".format(dataset))
 print('--------------------------------------')
 sys.stdout.flush() # 明示的にflush
 
-model = lgb.LGBMClassifier(objective='multiclass')
+model = CatBoostClassifier()
 
-# params = {
-#     'learning_rate' :  [1e-3],#[1e-3, 1e-2, 0.1, 1],
-#     'num_leaves': [16],#[16, 32, 64, 128, 256, 512, 1024],
-#     'n_estimators': [500],#[500, 1000],
-#     'max_depth': [10],#[10]
-# }
 params = {
-    'num_leaves': [3, 4, 5, 6, 7, 8, 9, 10],
-    'reg_alpha': [0, 1, 2, 3, 4, 5,10, 100],
-    'reg_lambda': [10, 15, 18, 20, 21, 22, 23, 25, 27, 29]
+    'depth': [6,7,8,9,10],
+    'learning_rate': [0.01,0.02,0.03,0.04],
+    'iterations': [100, 200, 300],
+    'logging_level':['Silent']
 }
 
+scorer = make_scorer(accuracy_score)
 
 cv = 5
 tuned_model = GridSearchCV(
     estimator=model, 
     param_grid=params,
     cv = cv,
-    verbose = 100
+    scoring=scorer,
 )
 
 tuned_model.fit(X, Y)
