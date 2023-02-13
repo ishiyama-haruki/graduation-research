@@ -1,2 +1,7 @@
 dataset letter is loaded
 --------------------------------------
+best parameters
+{'depth': 10, 'iterations': 300, 'learning_rate': 0.04, 'logging_level': 'Silent'}
+best train score = 0.9865333333333334
+test score by best model = 0.9498
+time: 11441.64714050293

@@ -48,7 +48,7 @@ num = 5
 # model parameters
 M = 7000
 lr = 1e-2
-T = 5000
+T = 10000
 
 # regularization
 lda1 = 1e-3 # weight decay

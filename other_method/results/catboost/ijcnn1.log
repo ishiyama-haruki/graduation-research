@@ -1,2 +1,7 @@
 dataset ijcnn1 is loaded
 --------------------------------------
+best parameters
+{'depth': 10, 'iterations': 300, 'learning_rate': 0.04, 'logging_level': 'Silent'}
+best train score = 0.9956791358271654
+test score by best model = 0.9845039857798715
+time: 8518.535054683685

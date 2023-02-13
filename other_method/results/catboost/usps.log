@@ -1,2 +1,7 @@
 dataset usps is loaded
 --------------------------------------
+best parameters
+{'depth': 10, 'iterations': 300, 'learning_rate': 0.04, 'logging_level': 'Silent'}
+best train score = 0.9964339596763132
+test score by best model = 0.9342301943198804
+time: 39785.282327890396
